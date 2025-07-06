@@ -33,7 +33,7 @@ console.log("jweqioweqeqww");
 const slashCommands = new Collection<string, SlashCommand>()
 slashCommands.set(testCommand.command.name, testCommand)
 slashCommands.set(helloCommand.command.name, helloCommand)
-const slashCommandsArr: SlashCommandBuilder[] = [testCommand.command, helloCommand]
+const slashCommandsArr: SlashCommandBuilder[] = [testCommand.command, helloCommand.command]
 
 const rest = new REST({ version: "10" }).setToken(token);
 rest.put(Routes.applicationCommands(client_id), {
