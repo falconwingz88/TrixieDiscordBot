@@ -22,9 +22,7 @@ const helloCommand: SlashCommand = {
             embeds: [
                 new EmbedBuilder()
                     .setAuthor({ name: "Response Title" })
-                    .setDescription(`👋 Hi! 
-                    Your ping: ${interaction.client.ws.ping}
-                    Your input: ${options.content}`)
+                    .setDescription(`👋 Hi! this is helpful bot`)
             ]
         })
     },
