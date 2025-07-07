@@ -68,7 +68,7 @@ rest.put(Routes.applicationCommands(client_id), {
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
     const command = slashCommands.get(interaction.commandName);
-
+	console.log(command);
     if (!command) {
         console.error(`No command matching ${interaction.commandName} was found.`);
         return;
