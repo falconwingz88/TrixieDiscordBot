@@ -20,10 +20,10 @@ const token = process.env.DISCORD_TOKEN; // Token from Railway Env Variable.
 const client_id = process.env.CLIENT_ID;
 const webhookt_id = process.env.WEBHOOK_ID;
 const webhook_token = process.env.WEBHOOK_TOKEN;
-console.log('DISCORD TOKEN' + token);
-console.log('CLIENT_ID' + client_id);
-console.log('WEBHOOK_ID' + webhookt_id);
-console.log('WEBHOOK_TOKEN' + webhook_token);
+console.log('DISCORD TOKEN ' + token);
+console.log('CLIENT_ID ' + client_id);
+console.log('WEBHOOK_ID ' + webhookt_id);
+console.log('WEBHOOK_TOKEN ' + webhook_token);
 
 const client = new Client({
     intents: [
@@ -43,7 +43,7 @@ const { webhookId, webhookToken } = require('./config.json');
 const webhookClient = new WebhookClient({ id: webhookt_id, token: webhook_token });
 const embed = new EmbedBuilder()
 	.setTitle('Some Title')
-	.setColor('#22D775');
+	.setColor(0x00FFFF);
 
 webhookClient.send({
 	content: 'Webhook test',
