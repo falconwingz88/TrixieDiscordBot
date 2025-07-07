@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChannelType, TextChannel, EmbedBuilder } from "discord.js"
 import { SlashCommand } from "../types";
-
+import webhookClient from "../index";
 const testCommand: SlashCommand = {
     command: new SlashCommandBuilder()
         .setName("test")
@@ -19,6 +19,8 @@ const testCommand: SlashCommand = {
             if (element.name && element.value) options[element.name] = element.value;
         }
         console.log('interaction: '+ interaction)
+        const message = await webhookClient.fetchMessage(interaction);
+        console.log("webhook message: " + message")
         interaction.reply({
             
             embeds: [
