@@ -18,6 +18,13 @@ import helloCommand from "./slashCommands/hello";
 
 const token = process.env.DISCORD_TOKEN; // Token from Railway Env Variable.
 const client_id = process.env.CLIENT_ID;
+const webhookt_id = process.env.WEBHOOK_ID;
+const webhook_token = process.env.WEBHOOK_TOKEN;
+console.log('DISCORD TOKEN' + token);
+console.log('CLIENT_ID' + client_id);
+console.log('WEBHOOK_ID' + webhookt_id);
+console.log('WEBHOOK_TOKEN' + webhook_token);
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -29,6 +36,21 @@ client.once(Events.ClientReady, async (c) => {
     console.log(`Logged in as ${c.user.tag}`);
 });
 console.log("jweqioweqeqww");
+//webhook
+const { EmbedBuilder, WebhookClient } = require('discord.js');
+const { webhookId, webhookToken } = require('./config.json');
+
+const webhookClient = new WebhookClient({ id: webhookt_id, token: webhook_token });
+const embed = new EmbedBuilder()
+	.setTitle('Some Title')
+	.setColor('#22D775');
+
+webhookClient.send({
+	content: 'Webhook test',
+	username: 'some-username',
+	avatarURL: 'https://i.imgur.com/AfFp7pu.png',
+	embeds: [embed],
+});
 
 const slashCommands = new Collection<string, SlashCommand>()
 slashCommands.set(testCommand.command.name, testCommand)
