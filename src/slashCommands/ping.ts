@@ -20,7 +20,7 @@ const testCommand: SlashCommand = {
         }
         console.log('interaction: '+ interaction)
         const message = await webhookClient.fetchMessage(interaction);
-        console.log("webhook message: " + message")
+        console.log("webhook message: " + message)
         interaction.reply({
             
             embeds: [
