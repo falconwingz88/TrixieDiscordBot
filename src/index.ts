@@ -38,7 +38,7 @@ client.once(Events.ClientReady, async (c) => {
 console.log("jweqioweqeqww");
 //webhook
 const { EmbedBuilder, WebhookClient } = require('discord.js');
-const { webhookId, webhookToken } = require('./config.json');
+const { webhookId, webhookToken } = require('./tsconfig.json');
 
 const webhookClient = new WebhookClient({ id: webhookt_id, token: webhook_token });
 const embed = new EmbedBuilder()
