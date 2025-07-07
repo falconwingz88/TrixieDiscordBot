@@ -16,11 +16,10 @@ const testCommand: SlashCommand = {
         const options: { [key: string]: string | number | boolean } = {};
         for (let i = 0; i < interaction.options.data.length; i++) {
             const element = interaction.options.data[i];
-            console.log('element: '+ element)
             if (element.name && element.value) options[element.name] = element.value;
         }
         console.log('interaction: '+ interaction)
-        interaction.reply({
+        const reply = interaction.reply({
             
             embeds: [
                 new EmbedBuilder()
@@ -30,6 +29,7 @@ const testCommand: SlashCommand = {
                     Your input: ${options.content}`)
             ]
         })
+        console.log("Sent message ID:", reply.id);
     },
     cooldown: 3
 }
