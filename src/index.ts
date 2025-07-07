@@ -40,6 +40,7 @@ console.log("jweqioweqeqww");
 const { EmbedBuilder, WebhookClient } = require('discord.js');
 
 const webhookClient = new WebhookClient({ id: webhookt_id, token: webhook_token });
+export default webhookClient;
 const embed = new EmbedBuilder()
 	.setTitle('Some Title')
 	.setColor(0x00FFFF);
