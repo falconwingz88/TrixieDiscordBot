@@ -16,11 +16,10 @@ const testCommand: SlashCommand = {
         const options: { [key: string]: string | number | boolean } = {};
         for (let i = 0; i < interaction.options.data.length; i++) {
             const element = interaction.options.data[i];
+            console.log('element: '+ element)
             if (element.name && element.value) options[element.name] = element.value;
         }
         console.log('interaction: '+ interaction)
-        const message = await webhookClient.fetchMessage(interaction);
-        console.log("webhook message: " + message)
         interaction.reply({
             
             embeds: [
