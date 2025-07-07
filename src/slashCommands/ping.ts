@@ -18,7 +18,7 @@ const testCommand: SlashCommand = {
             const element = interaction.options.data[i];
             if (element.name && element.value) options[element.name] = element.value;
         }
-
+        console.log('interaction: '+ interaction)
         interaction.reply({
             
             embeds: [
