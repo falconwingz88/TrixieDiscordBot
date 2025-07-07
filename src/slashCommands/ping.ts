@@ -1,6 +1,6 @@
-import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, CommandInteraction } from 'discord.js';
 import { SlashCommand } from '../types';
-import webhookClient from '../index'; // ensure this exports WebhookClient
+import webhookClient from '../index'; // make sure this exports a WebhookClient
 
 const testCommand: SlashCommand = {
   command: new SlashCommandBuilder()
@@ -13,7 +13,7 @@ const testCommand: SlashCommand = {
         .setRequired(true)
     ),
 
-  execute: async interaction => {
+  execute: async (interaction: CommandInteraction) => {
     const url = interaction.options.getString('url', true);
     console.log('📥 Interaction Received:', {
       user: interaction.user.tag,
