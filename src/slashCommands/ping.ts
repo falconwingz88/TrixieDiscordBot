@@ -20,7 +20,7 @@ const testCommand: SlashCommand = {
         }
 
         interaction.reply({
-            console.log("option: " + option);
+            
             embeds: [
                 new EmbedBuilder()
                     .setAuthor({ name: "Response Title" })
