@@ -1,43 +1,84 @@
-import { SlashCommandBuilder, ChannelType, TextChannel, EmbedBuilder } from "discord.js";
-import { SlashCommand } from "../types";
-import webhookClient from "../index";
+import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
+import { SlashCommand } from '../types';
+import webhookClient from '../index'; // ensure this exports WebhookClient
 
 const testCommand: SlashCommand = {
-    command: new SlashCommandBuilder()
-        .setName("test")
-        .setDescription("Test command")
-        .addStringOption(option =>
-            option
-                .setName("content")
-                .setDescription("this is a parameter for a command")
-                .setRequired(false)
-        ),
-    execute: async (interaction) => {
-        const options: { [key: string]: string | number | boolean } = {};
-        for (let i = 0; i < interaction.options.data.length; i++) {
-            const element = interaction.options.data[i];
-            if (element.name && element.value) options[element.name] = element.value;
-        }
+  command: new SlashCommandBuilder()
+    .setName('test')
+    .setDescription('Fetches content from a URL and posts it via webhook')
+    .addStringOption(option =>
+      option
+        .setName('url')
+        .setDescription('The URL to fetch')
+        .setRequired(true)
+    ),
 
-        console.log('interaction:', interaction);
+  execute: async interaction => {
+    const url = interaction.options.getString('url', true);
+    console.log('📥 Interaction Received:', {
+      user: interaction.user.tag,
+      command: interaction.commandName,
+      url
+    });
 
-        const message = await interaction.reply({
-            fetchReply: true,
-            embeds: [
-                new EmbedBuilder()
-                    .setAuthor({ name: "Response Title" })
-                    .setDescription(`👋 Hi! 
-                    Your ping: ${interaction.client.ws.ping}
-                    Your input: ${options.content}`)
-            ]
-        });
-        console.log("Message :", message);
-        console.log("Message ID:", message.id);
-        console.log("Message content:", message.content);
-        console.log("Message channel:", message.channel.id);
-        console.log("Message URL:", message.url);
-    },
-    cooldown: 3
+    await interaction.deferReply({ ephemeral: true });
+
+    try {
+      const res = await fetch(url);
+      const contentType = res.headers.get('content-type');
+
+      console.log(`🌐 Fetched URL: ${url}`);
+      console.log(`↩️ Response status: ${res.status} ${res.statusText}`);
+      console.log(`📄 Content-Type: ${contentType}`);
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+
+      let text: string;
+      if (contentType?.includes('application/json')) {
+        const json = await res.json();
+        text = JSON.stringify(json, null, 2);
+      } else {
+        text = await res.text();
+      }
+
+      console.log('📝 Raw fetched content:', text.length > 500 ? text.slice(0, 500) + '...[truncated]' : text);
+
+      if (text.length > 1900) {
+        text = text.slice(0, 1900) + '\n...[truncated]';
+      }
+
+      const webhookMessage = await webhookClient.send({
+        content: `📡 Fetched content from: ${url}`,
+        embeds: [
+          new EmbedBuilder()
+            .setTitle('Fetched Content')
+            .setDescription(`\`\`\`\n${text}\n\`\`\``)
+            .setColor(0x00aaff)
+        ],
+        fetchReply: true
+      });
+
+      console.log('📤 Webhook message sent:', {
+        id: webhookMessage.id,
+        url: webhookMessage.url,
+        channelId: webhookMessage.channel.id
+      });
+
+      await interaction.editReply({
+        content: `✅ Content sent via webhook.\n[Jump to Message](${webhookMessage.url})`
+      });
+
+    } catch (error: any) {
+      console.error('❌ Fetch or send error:', error);
+      await interaction.editReply({
+        content: `❌ Failed to fetch from URL: ${error.message}`
+      });
+    }
+  },
+
+  cooldown: 3
 };
 
 export default testCommand;
