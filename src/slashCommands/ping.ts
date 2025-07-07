@@ -6,6 +6,7 @@ const testCommand: SlashCommand = {
         .setName("test")
         .setDescription("Test command")
         .addStringOption(option => {
+            console.log("option: " + option)
             return option
                 .setName("content")
                 .setDescription("this is a parameter for a command")
