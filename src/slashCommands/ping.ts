@@ -6,7 +6,7 @@ const testCommand: SlashCommand = {
         .setName("test")
         .setDescription("Test command")
         .addStringOption(option => {
-            console.log("option: " + option)
+            
             return option
                 .setName("content")
                 .setDescription("this is a parameter for a command")
@@ -20,6 +20,7 @@ const testCommand: SlashCommand = {
         }
 
         interaction.reply({
+            console.log("option: " + option);
             embeds: [
                 new EmbedBuilder()
                     .setAuthor({ name: "Response Title" })
