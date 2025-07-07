@@ -1,4 +1,5 @@
 import { SlashCommandBuilder, ChannelType, TextChannel, EmbedBuilder } from "discord.js"
+const { EmbedBuilder, WebhookClient } = require('discord.js');
 import { SlashCommand } from "../types";
 import webhookClient from "../index";
 const testCommand: SlashCommand = {
