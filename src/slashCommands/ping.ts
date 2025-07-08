@@ -74,14 +74,14 @@ const testCommand: SlashCommand = {
       } else {
         console.warn("⚠️ Webhook sent but no message object was returned.");
       }
-
+      /*
       // Safely edit reply — no message link if not available
       const replyText = webhookMessage?.url
         ? `✅ Content sent via webhook.\n[Jump to Message](${webhookMessage.url})`
         : `✅ Webhook request sent to: ${url}`;
 
       await interaction.editReply({ content: replyText });
-
+      */
     } catch (error: any) {
       console.error("❌ Fetch or send error:", error);
       await interaction.editReply({
