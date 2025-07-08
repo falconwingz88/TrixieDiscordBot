@@ -64,24 +64,35 @@ const testCommand: SlashCommand = {
             .setDescription(`\`\`\`\n${text}\n\`\`\``)
             .setColor(0x00aaff)
         ],
-        fetchReply: true // for Discord webhooks; ignored by most external ones
+        fetchReply: true // Only safe with Discord webhooks
       });
 
-      // Log safely
+      // Log webhook response
       if (webhookMessage?.id) {
-        console.log("📤 Webhook message sent: " );
-        console.log(JSON.stringify("here: "+webhookMessage));
+        console.log("📤 Webhook message sent:");
+        console.log({
+          id: webhookMessage.id,
+          url: webhookMessage.url,
+          channelId: webhookMessage.channel?.id
+        });
       } else {
-        console.warn("⚠️ Webhook sent but no message object was returned.");
+        console.warn("⚠️ Webhook sent, but no message object was returned.");
       }
-    
-      // Safely edit reply — no message link if not available
-      const replyText = webhookMessage?.url
-        ? `✅ Content sent via webhook.\n[Jump to Message](${webhookMessage.url})`
-        : `✅ Webhook request sent to: ${url}`;
 
-      await interaction.editReply({ content: replyText });
-    
+      // ✅ Final reply (safe: no raw webhook URL, only Discord message URL)
+      const replyLines = [
+        "✅ Webhook successfully sent",
+        `📡 Fetched content from: \`${url}\`` // 👈 display as inline code to avoid previews
+      ];
+
+      if (webhookMessage?.url) {
+        replyLines.push(`🔗 [Jump to Webhook Message](${webhookMessage.url})`);
+      }
+
+      await interaction.editReply({
+        content: replyLines.join("\n")
+      });
+
     } catch (error: any) {
       console.error("❌ Fetch or send error:", error);
       await interaction.editReply({
