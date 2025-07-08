@@ -70,7 +70,7 @@ const testCommand: SlashCommand = {
       // Log safely
       if (webhookMessage?.id) {
         console.log("📤 Webhook message sent: " );
-        console.log(JSON.stringify(webhookMessage));
+        console.log(JSON.stringify("here: "+webhookMessage));
       } else {
         console.warn("⚠️ Webhook sent but no message object was returned.");
       }
