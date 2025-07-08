@@ -64,6 +64,7 @@ const testCommand: SlashCommand = {
             .setDescription(`\`\`\`\n${text}\n\`\`\``)
             .setColor(0x00aaff)
         ],
+        wait: true
         fetchReply: true
       });
 
