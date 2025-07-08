@@ -49,7 +49,7 @@ webhookClient.send({
 	content: '<==========>',
 	username: 'some-username',
 	avatarURL: 'https://i.imgur.com/AfFp7pu.png',
-	embed: [embed]
+	embeds: [embed]
 });
 
 const slashCommands = new Collection<string, SlashCommand>()
