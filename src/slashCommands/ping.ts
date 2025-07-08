@@ -14,7 +14,7 @@ const testCommand: SlashCommand = {
     ),
 
   execute: async (interaction) => {
-    // Extract URL manually from interaction.options.data
+    // Extract URL manually
     let url = "";
     for (const opt of interaction.options.data) {
       if (opt.name === "url" && opt.value) {
@@ -64,26 +64,35 @@ const testCommand: SlashCommand = {
             .setDescription(`\`\`\`\n${text}\n\`\`\``)
             .setColor(0x00aaff)
         ],
-        wait: true,
-        fetchReply: true
+        fetchReply: true // for Discord webhooks; ignored by most external ones
       });
-      console.log("📥 webhook message: "+ webhookMessage);
-      await interaction.editReply({
-        content: "✅ Webhook request sent successfully!"
-      });
-   /*   
-      await interaction.editReply({
-        content: `✅ Content sent via webhook.\n[Jump to Message](${webhookMessage.url})`
-      });
+
+      // Log safely
+      if (webhookMessage?.id) {
+        console.log("📤 Webhook message sent:", {
+          id: webhookMessage.id,
+          url: webhookMessage.url,
+          channelId: webhookMessage.channel?.id
+        });
+      } else {
+        console.warn("⚠️ Webhook sent but no message object was returned.");
+      }
+
+      // Safely edit reply — no message link if not available
+      const replyText = webhookMessage?.url
+        ? `✅ Content sent via webhook.\n[Jump to Message](${webhookMessage.url})`
+        : `✅ Webhook request sent to: ${url}`;
+
+      await interaction.editReply({ content: replyText });
 
     } catch (error: any) {
       console.error("❌ Fetch or send error:", error);
       await interaction.editReply({
         content: `❌ Failed to fetch from URL: ${error.message}`
       });
-      */
     }
   },
+
   cooldown: 3
 };
 
