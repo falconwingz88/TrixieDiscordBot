@@ -109,7 +109,8 @@ const testCommand: SlashCommand = {
       // ✅ Final reply with visible full URL
       const replyLines = [
         "✅ Webhook successfully sent",
-        `📡 Fetched content from: \${finalUrl}\`
+        `📡 Fetched content from: \`${finalUrl}\`` // 👈 display as inline code to avoid previews
+      
       ];
 
       if (webhookMessage?.url) {
