@@ -114,7 +114,7 @@ const testCommand: SlashCommand = {
       ];
 
       if (webhookMessage?.url) {
-        replyLines.push(`[Jump to Webhook Message](${webhookMessage.url})`);
+        replyLines.push(`🔗 [Jump to Webhook Message](${webhookMessage.url})`);
       }
 
       await interaction.editReply({ content: replyLines.join("\n") });
