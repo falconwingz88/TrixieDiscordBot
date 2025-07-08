@@ -113,7 +113,7 @@ const testCommand: SlashCommand = {
       ];
 
       if (webhookMessage?.url) {
-        replyLines.push(`🔗 [Jump to Webhook Message](${webhookMessage.url})`);
+        replyLines.push(`[Jump to Webhook Message](${webhookMessage.url})`);
       }
 
       await interaction.editReply({ content: replyLines.join("\n") });
@@ -121,7 +121,7 @@ const testCommand: SlashCommand = {
     } catch (error: any) {
       console.error("❌ Fetch or send error:", error);
       await interaction.editReply({
-        content: ❌ Failed to fetch from URL: ${error.message}
+        content: '❌ Failed to fetch from URL: ${error.message}'
       });
     }
   },
