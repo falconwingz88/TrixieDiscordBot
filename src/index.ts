@@ -42,13 +42,14 @@ const { EmbedBuilder, WebhookClient } = require('discord.js');
 const webhookClient = new WebhookClient({ id: webhookt_id, token: webhook_token });
 export default webhookClient;
 const embed = new EmbedBuilder()
-	.setTitle('Some Title')
+	.setTitle('Ready')
 	.setColor(0x00FFFF);
 
 webhookClient.send({
-	content: 'Ready',
+	content: '<==========>',
 	username: 'some-username',
 	avatarURL: 'https://i.imgur.com/AfFp7pu.png',
+	embed: embed
 });
 
 const slashCommands = new Collection<string, SlashCommand>()
