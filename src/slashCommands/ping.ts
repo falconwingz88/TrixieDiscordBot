@@ -67,12 +67,7 @@ const testCommand: SlashCommand = {
         wait: true,
         fetchReply: true
       });
-
-      console.log("📤 Webhook message sent:", {
-        id: webhookMessage.id,
-        url: webhookMessage.url,
-        channelId: webhookMessage.channel.id
-      });
+      cosole.log("📥 webhook message: "+ webhookMessage)
 
       await interaction.editReply({
         content: `✅ Content sent via webhook.\n[Jump to Message](${webhookMessage.url})`
