@@ -46,7 +46,7 @@ const embed = new EmbedBuilder()
 	.setColor(0x00FFFF);
 
 webhookClient.send({
-	content: '<==========>',
+	content: 'Bot Testing Ready',
 	username: 'some-username',
 	avatarURL: 'https://i.imgur.com/AfFp7pu.png',
 	embeds: [embed]
