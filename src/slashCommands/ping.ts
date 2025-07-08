@@ -2,6 +2,7 @@ import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand } from "../types";
 import webhookClient from "../index";
 
+// 🔸 Helper to split key=value
 function parseParam(input?: string): [string, string] | null {
   if (!input || !input.includes("=")) return null;
   const [key, ...rest] = input.split("=");
@@ -28,12 +29,13 @@ const testCommand: SlashCommand = {
   execute: async (interaction) => {
     await interaction.deferReply({ ephemeral: true });
 
-    // Extract options
+    // 🔸 Extract base URL and param values
     const baseUrl = interaction.options.data.find(opt => opt.name === "url")?.value as string;
     const rawParams = ["param1", "param2", "param3"].map(name =>
       interaction.options.data.find(opt => opt.name === name)?.value as string | undefined
     );
 
+    // 🔸 Parse key=value from params
     const queryParams: string[] = [];
     for (const raw of rawParams) {
       const parsed = parseParam(raw);
@@ -43,11 +45,15 @@ const testCommand: SlashCommand = {
       }
     }
 
-    const fullUrl = queryParams.length > 0
-      ? `${baseUrl}?${queryParams.join("&")}`
-      : baseUrl;
+    // 🔸 Build final URL
+    let fullUrl = baseUrl;
+    if (queryParams.length > 0) {
+      fullUrl += "?" + queryParams.join("&");
+    }
 
-    console.log("📥 Built URL:", fullUrl);
+    // 🔸 Log and await for traceability
+    console.log("📥 Final URL to be fetched:", fullUrl);
+    await Promise.resolve(fullUrl); // Hook point if needed
 
     try {
       const res = await fetch(fullUrl);
@@ -94,7 +100,7 @@ const testCommand: SlashCommand = {
       await interaction.editReply({ content: replyLines.join("\n") });
 
     } catch (error: any) {
-      console.error("❌ Error:", error);
+      console.error("❌ Fetch or send error:", error);
       await interaction.editReply({
         content: `❌ Failed to send webhook: ${error.message}`
       });
