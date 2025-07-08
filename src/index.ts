@@ -46,10 +46,9 @@ const embed = new EmbedBuilder()
 	.setColor(0x00FFFF);
 
 webhookClient.send({
-	content: 'Webhook test',
+	content: 'Ready',
 	username: 'some-username',
 	avatarURL: 'https://i.imgur.com/AfFp7pu.png',
-	embeds: [embed],
 });
 
 const slashCommands = new Collection<string, SlashCommand>()
