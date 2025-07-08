@@ -2,7 +2,7 @@ import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand } from "../types";
 import webhookClient from "../index";
 
-// 🔸 Helper to split key=value
+// 🔸 Parse "key=value" input into [key, value]
 function parseParam(input?: string): [string, string] | null {
   if (!input || !input.includes("=")) return null;
   const [key, ...rest] = input.split("=");
@@ -29,13 +29,13 @@ const testCommand: SlashCommand = {
   execute: async (interaction) => {
     await interaction.deferReply({ ephemeral: true });
 
-    // 🔸 Extract base URL and param values
+    // 🔸 Extract inputs
     const baseUrl = interaction.options.data.find(opt => opt.name === "url")?.value as string;
     const rawParams = ["param1", "param2", "param3"].map(name =>
       interaction.options.data.find(opt => opt.name === name)?.value as string | undefined
     );
 
-    // 🔸 Parse key=value from params
+    // 🔸 Build query string
     const queryParams: string[] = [];
     for (const raw of rawParams) {
       const parsed = parseParam(raw);
@@ -45,15 +45,15 @@ const testCommand: SlashCommand = {
       }
     }
 
-    // 🔸 Build final URL
+    // 🔸 Final URL with query string
     let fullUrl = baseUrl;
     if (queryParams.length > 0) {
       fullUrl += "?" + queryParams.join("&");
     }
 
-    // 🔸 Log and await for traceability
+    // 🔸 Log and await final URL
     console.log("📥 Final URL to be fetched:", fullUrl);
-    await Promise.resolve(fullUrl); // Hook point if needed
+    await Promise.resolve(fullUrl); // Hook point for later if needed
 
     try {
       const res = await fetch(fullUrl);
@@ -77,6 +77,7 @@ const testCommand: SlashCommand = {
         text = text.slice(0, 1900) + "\n...[truncated]";
       }
 
+      // 🔸 Send to webhook
       const webhookMessage = await webhookClient.send({
         content: `📡 Webhook triggered with URL: ${fullUrl}`,
         embeds: [
@@ -88,9 +89,12 @@ const testCommand: SlashCommand = {
         fetchReply: true
       });
 
+      // 🔸 Obfuscate final URL to avoid re-trigger
+      const safeDisplayedUrl = fullUrl.replace(/\./g, "[dot]");
+
       const replyLines = [
         "✅ Webhook successfully sent",
-        `📡 Triggered URL: \`${fullUrl}\``
+        `📡 Triggered URL:\n${safeDisplayedUrl}`
       ];
 
       if (webhookMessage?.url) {
