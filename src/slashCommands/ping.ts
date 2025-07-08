@@ -2,52 +2,61 @@ import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand } from "../types";
 import webhookClient from "../index";
 
-// Optional: helper to parse key=value from options in future
-function buildQueryURL(baseUrl: string, params: Record<string, string>) {
-  const query = new URLSearchParams(params).toString();
-  return query ? `${baseUrl}?${query}` : baseUrl;
+// 🔸 Parses a string like "key=value" into [key, value]
+function parseParam(input?: string): [string, string] | null {
+  if (!input || !input.includes("=")) return null;
+  const [key, ...valueParts] = input.split("=");
+  return [key.trim(), valueParts.join("=").trim()];
 }
 
 const testCommand: SlashCommand = {
   command: new SlashCommandBuilder()
     .setName("test")
-    .setDescription("Fetches content from a URL and posts it via webhook")
+    .setDescription("Send data to a webhook by building query parameters")
     .addStringOption(option =>
-      option.setName("url").setDescription("The base URL to fetch").setRequired(true)
+      option.setName("url").setDescription("Base webhook URL").setRequired(true)
     )
     .addStringOption(option =>
-      option.setName("key1").setDescription("First key=value pair")
+      option.setName("param1").setDescription("First key=value query parameter")
     )
     .addStringOption(option =>
-      option.setName("key2").setDescription("Second key=value pair")
+      option.setName("param2").setDescription("Second key=value query parameter")
     )
     .addStringOption(option =>
-      option.setName("key3").setDescription("Third key=value pair")
+      option.setName("param3").setDescription("Third key=value query parameter")
     ),
 
   execute: async (interaction) => {
     await interaction.deferReply({ ephemeral: true });
 
-    // Extract inputs
-    const baseUrl = interaction.options.getString("url", true);
-    const rawParams = [
-      interaction.options.getString("key1"),
-      interaction.options.getString("key2"),
-      interaction.options.getString("key3"),
-    ];
+    // 🔸 Extract raw option data from interaction.options.data
+    const data = interaction.options.data;
+    const baseUrl = data.find(opt => opt.name === "url")?.value as string;
 
-    // Build query params
+    const paramRawList = [
+      data.find(opt => opt.name === "param1")?.value,
+      data.find(opt => opt.name === "param2")?.value,
+      data.find(opt => opt.name === "param3")?.value
+    ] as (string | undefined)[];
+
+    // 🔸 Convert param inputs to object form
     const queryParams: Record<string, string> = {};
-    for (const raw of rawParams) {
-      if (!raw || !raw.includes("=")) continue;
-      const [key, ...valueParts] = raw.split("=");
-      const value = valueParts.join("=");
-      if (key && value) queryParams[key.trim()] = value.trim();
+    for (const raw of paramRawList) {
+      const parsed = parseParam(raw);
+      if (parsed) {
+        const [key, value] = parsed;
+        queryParams[encodeURIComponent(key)] = encodeURIComponent(value);
+      }
     }
 
-    const finalUrl = buildQueryURL(baseUrl, queryParams);
+    // 🔸 Construct final URL
+    const query = Object.entries(queryParams)
+      .map(([k, v]) => `${k}=${v}`)
+      .join("&");
+    const finalUrl = query ? `${baseUrl}?${query}` : baseUrl;
 
     console.log("📥 Final URL to fetch:", finalUrl);
+    await Promise.resolve(finalUrl); // Optional async hook point
 
     try {
       const res = await fetch(finalUrl);
@@ -57,9 +66,7 @@ const testCommand: SlashCommand = {
       console.log(`↩️ Status: ${res.status} ${res.statusText}`);
       console.log(`📄 Content-Type: ${contentType}`);
 
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-      }
+      if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
 
       let text: string;
       if (contentType?.includes("application/json")) {
@@ -74,27 +81,22 @@ const testCommand: SlashCommand = {
       }
 
       const webhookMessage = await webhookClient.send({
-        content: `📡 Webhook triggered with URL (obfuscated):`,
+        content: `📡 Webhook triggered.`,
         embeds: [
           new EmbedBuilder()
             .setTitle("Fetched Content")
             .setDescription(`\`\`\`\n${text}\n\`\`\``)
-            .setFooter({ text: "Triggered via /test command" })
+            .setFooter({ text: "Sent via /test command" })
             .setColor(0x00aaff)
         ],
         fetchReply: true
       });
 
-      if (webhookMessage?.id) {
-        console.log("📤 Webhook message sent:", {
-          id: webhookMessage.id,
-          url: webhookMessage.url,
-          channelId: webhookMessage.channel?.id
-        });
-      }
-
-      // Obfuscate URL to avoid Discord preview-trigger
-      const safeUrl = finalUrl.replace(/\./g, "[dot]").replace(/\?/g, "[?]").replace(/&/g, "[&]");
+      // 🔸 Obfuscate final URL to avoid Discord triggering it
+      const safeUrl = finalUrl
+        .replace(/\./g, "[dot]")
+        .replace(/\?/g, "[?]")
+        .replace(/&/g, "[&]");
 
       const replyLines = [
         "✅ Webhook successfully sent",
@@ -105,14 +107,12 @@ const testCommand: SlashCommand = {
         replyLines.push(`🔗 [Jump to Webhook Message](${webhookMessage.url})`);
       }
 
-      await interaction.editReply({
-        content: replyLines.join("\n")
-      });
+      await interaction.editReply({ content: replyLines.join("\n") });
 
     } catch (error: any) {
       console.error("❌ Fetch or send error:", error);
       await interaction.editReply({
-        content: `❌ Failed to fetch from URL: ${error.message}`
+        content: `❌ Failed to send webhook: ${error.message}`
       });
     }
   },
