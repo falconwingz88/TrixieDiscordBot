@@ -109,8 +109,7 @@ const testCommand: SlashCommand = {
       // ✅ Final reply with visible full URL
       const replyLines = [
         "✅ Webhook successfully sent",
-        `📡 Fetched content from: \`${finalUrl}\`` // 👈 display as inline code to avoid previews
-      
+        `📡 Fetched content from: \`${finalUrl}\``
       ];
 
       if (webhookMessage?.url) {
@@ -122,7 +121,7 @@ const testCommand: SlashCommand = {
     } catch (error: any) {
       console.error("❌ Fetch or send error:", error);
       await interaction.editReply({
-        content: '❌ Failed to fetch from URL: ${error.message}'
+        content: `❌ Failed to fetch from URL: ${error.message}`
       });
     }
   },
