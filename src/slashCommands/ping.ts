@@ -68,7 +68,10 @@ const testCommand: SlashCommand = {
         fetchReply: true
       });
       console.log("📥 webhook message: "+ webhookMessage);
-
+      await interaction.editReply({
+        content: "✅ Webhook request sent successfully!"
+      });
+   /*   
       await interaction.editReply({
         content: `✅ Content sent via webhook.\n[Jump to Message](${webhookMessage.url})`
       });
@@ -78,9 +81,9 @@ const testCommand: SlashCommand = {
       await interaction.editReply({
         content: `❌ Failed to fetch from URL: ${error.message}`
       });
+      */
     }
   },
-
   cooldown: 3
 };
 
