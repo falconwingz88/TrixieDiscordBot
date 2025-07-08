@@ -14,7 +14,7 @@ const testCommand: SlashCommand = {
     ),
 
   execute: async (interaction) => {
-    // Extract URL manually
+    // Extract URL manually from interaction.options.data
     let url = "";
     for (const opt of interaction.options.data) {
       if (opt.name === "url" && opt.value) {
@@ -28,7 +28,7 @@ const testCommand: SlashCommand = {
       url
     });
 
-    //await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ ephemeral: true });
 
     try {
       const res = await fetch(url);
@@ -64,24 +64,20 @@ const testCommand: SlashCommand = {
             .setDescription(`\`\`\`\n${text}\n\`\`\``)
             .setColor(0x00aaff)
         ],
-        fetchReply: true // for Discord webhooks; ignored by most external ones
+        fetchReply: true
       });
 
-      // Log safely
-      if (webhookMessage?.id) {
-        console.log("📤 Webhook message sent: " );
-        console.log(JSON.stringify("here: "+webhookMessage));
-      } else {
-        console.warn("⚠️ Webhook sent but no message object was returned.");
-      }
-      /*
-      // Safely edit reply — no message link if not available
-      const replyText = webhookMessage?.url
-        ? `✅ Content sent via webhook.\n[Jump to Message](${webhookMessage.url})`
-        : `✅ Webhook request sent to: ${url}`;
+      console.log("📥 webhook message:", webhookMessage);
 
-      await interaction.editReply({ content: replyText });
-      */
+      // ✅ Final reply to the slash command user
+      await interaction.editReply({
+        content: [
+          "✅ Webhook successfully sent",
+          `📡 Fetched content from: ${url}`,
+          `Fetched Content\n\`\`\`json\n${text}\n\`\`\``
+        ].join("\n")
+      });
+
     } catch (error: any) {
       console.error("❌ Fetch or send error:", error);
       await interaction.editReply({
