@@ -9,32 +9,60 @@ const testCommand: SlashCommand = {
     .addStringOption(option =>
       option
         .setName("url")
-        .setDescription("The URL to fetch")
+        .setDescription("The base URL to fetch")
         .setRequired(true)
+    )
+    .addStringOption(option =>
+      option
+        .setName("value1")
+        .setDescription("Value for query param 'value1'")
+        .setRequired(false)
+    )
+    .addStringOption(option =>
+      option
+        .setName("value2")
+        .setDescription("Value for query param 'value2'")
+        .setRequired(false)
     ),
 
   execute: async (interaction) => {
-    // Extract URL manually
-    let url = "";
+    // Extract options manually from interaction.options.data
+    let baseUrl = "";
+    let value1 = "";
+    let value2 = "";
+
     for (const opt of interaction.options.data) {
       if (opt.name === "url" && opt.value) {
-        url = String(opt.value);
+        baseUrl = String(opt.value);
+      }
+      if (opt.name === "value1" && opt.value) {
+        value1 = String(opt.value);
+      }
+      if (opt.name === "value2" && opt.value) {
+        value2 = String(opt.value);
       }
     }
+
+    // Build final URL with query params
+    const query = new URLSearchParams();
+    if (value1) query.append("value1", value1);
+    if (value2) query.append("value2", value2);
+
+    const finalUrl = query.toString() ? `${baseUrl}?${query}` : baseUrl;
 
     console.log("📥 Interaction Received:", {
       user: interaction.user.tag,
       command: interaction.commandName,
-      url
+      finalUrl
     });
 
     await interaction.deferReply({ ephemeral: true });
 
     try {
-      const res = await fetch(url);
+      const res = await fetch(finalUrl);
       const contentType = res.headers.get("content-type");
 
-      console.log(`🌐 Fetched URL: ${url}`);
+      console.log(`🌐 Fetched URL: ${finalUrl}`);
       console.log(`↩️ Response status: ${res.status} ${res.statusText}`);
       console.log(`📄 Content-Type: ${contentType}`);
 
@@ -57,20 +85,19 @@ const testCommand: SlashCommand = {
       }
 
       const webhookMessage = await webhookClient.send({
-        content: `📡 Fetched content from: ${url}`,
+        content: `📡 Fetched content from: ${finalUrl}`,
         embeds: [
           new EmbedBuilder()
             .setTitle("Fetched Content")
             .setDescription(`\`\`\`\n${text}\n\`\`\``)
             .setColor(0x00aaff)
         ],
-        fetchReply: true // Only safe with Discord webhooks
+        fetchReply: true
       });
 
       // Log webhook response
       if (webhookMessage?.id) {
-        console.log("📤 Webhook message sent:");
-        console.log({
+        console.log("📤 Webhook message sent:", {
           id: webhookMessage.id,
           url: webhookMessage.url,
           channelId: webhookMessage.channel?.id
@@ -79,19 +106,17 @@ const testCommand: SlashCommand = {
         console.warn("⚠️ Webhook sent, but no message object was returned.");
       }
 
-      // ✅ Final reply (safe: no raw webhook URL, only Discord message URL)
+      // ✅ Final reply with visible full URL
       const replyLines = [
         "✅ Webhook successfully sent",
-        `📡 Fetched content from: \`${url}\`` // 👈 display as inline code to avoid previews
+        `📡 Fetched content from: ${finalUrl}`
       ];
 
       if (webhookMessage?.url) {
         replyLines.push(`🔗 [Jump to Webhook Message](${webhookMessage.url})`);
       }
 
-      await interaction.editReply({
-        content: replyLines.join("\n")
-      });
+      await interaction.editReply({ content: replyLines.join("\n") });
 
     } catch (error: any) {
       console.error("❌ Fetch or send error:", error);
