@@ -20,8 +20,10 @@ import createCommand from "./slashCommands/create";
 
 const token = process.env.DISCORD_TOKEN; // Token from Railway Env Variable.
 const client_id = process.env.CLIENT_ID;
+
 const webhook_id = process.env.WEBHOOK_ID;
 const webhook_token = process.env.WEBHOOK_TOKEN;
+
 const production_url = process.env.PRODUCTION_URL;
 const test_url = process.env.TEST_URL;
 
