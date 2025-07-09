@@ -72,11 +72,11 @@ const createCommand: SlashCommand = {
       }
 
       const webhookMessage = await webhookClient.send({
-        content: `📡 Fetched content from: ${finalUrl}`,
+        content: `✅ Webhook successfully sent`,
         embeds: [
           new EmbedBuilder()
             .setTitle(`${title} Workflow Started`)
-            .setDescription(`✅ Webhook successfully sent`)
+            .setDescription(`Creating.....`)
             .setColor(0x00aaff)
         ],
         fetchReply: true
