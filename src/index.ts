@@ -20,14 +20,14 @@ import createCommand from "./slashCommands/create";
 
 const token = process.env.DISCORD_TOKEN; // Token from Railway Env Variable.
 const client_id = process.env.CLIENT_ID;
-const webhookt_id = process.env.WEBHOOK_ID;
+const webhook_id = process.env.WEBHOOK_ID;
 const webhook_token = process.env.WEBHOOK_TOKEN;
 const production_url = process.env.PRODUCTION_URL;
 const test_url = process.env.TEST_URL;
 
 console.log('DISCORD TOKEN ' + token);
 console.log('CLIENT_ID ' + client_id);
-console.log('WEBHOOK_ID ' + webhookt_id);
+console.log('WEBHOOK_ID ' + webhook_id);
 console.log('WEBHOOK_TOKEN ' + webhook_token);
 console.log('production_url ' + PRODUCTION_URL);
 console.log('test_url ' + TEST_URL);
@@ -46,7 +46,7 @@ console.log("jweqioweqeqww");
 //webhook
 const { EmbedBuilder, WebhookClient } = require('discord.js');
 
-const webhookClient = new WebhookClient({ id: webhookt_id, token: webhook_token });
+const webhookClient = new WebhookClient({ id: webhook_id, token: webhook_token });
 export default webhookClient;
 const embed = new EmbedBuilder()
 	.setTitle('Ready')
