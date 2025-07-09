@@ -23,8 +23,19 @@ const client_id = process.env.CLIENT_ID;
 const webhook_id = process.env.WEBHOOK_ID;
 const webhook_token = process.env.WEBHOOK_TOKEN;
 
-export const production_url = process.env.PRODUCTION_URL;
-export const test_url = process.env.TEST_URL;
+const production_url_raw = process.env.PRODUCTION_URL;
+const test_url_raw = process.env.TEST_URL;
+
+const originalUrl = production_url_raw;
+
+// Function to add "A" in front of a URL
+function addPrefixA(url: string): string {
+  return "A" + url;
+}
+
+// Assign the result to a new variable
+const production_url = addPrefixA(production_url_raw); // "Ahttps://..."
+const test_url = addPrefixA(test_url_raw);
 
 console.log('DISCORD TOKEN ' + token);
 console.log('CLIENT_ID ' + client_id);
