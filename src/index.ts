@@ -14,8 +14,6 @@ import { readdirSync } from "fs";
 import dotenv from "dotenv";
 dotenv.config();
 
-//export const production_url = process.env.PRODUCTION_URL;
-//export const test_url = process.env.TEST_URL;
 const token = process.env.DISCORD_TOKEN; // Token from Railway Env Variable.
 const client_id = process.env.CLIENT_ID;
 const webhook_id = process.env.WEBHOOK_ID;
@@ -25,25 +23,10 @@ import testCommand from "./slashCommands/ping";
 import helloCommand from "./slashCommands/hello";
 import createCommand from "./slashCommands/create";
 
-
-/*
-const originalUrl = production_url_raw;
-
-// Function to add "A" in front of a URL
-function addPrefixA(url: string): string {
-  return "A" + url;
-}
-
-// Assign the result to a new variable
-export const production_url = addPrefixA(production_url_raw); // "Ahttps://..."
-export const test_url = addPrefixA(test_url_raw);
-*/
 console.log('DISCORD TOKEN ' + token);
 console.log('CLIENT_ID ' + client_id);
 console.log('WEBHOOK_ID ' + webhook_id);
 console.log('WEBHOOK_TOKEN ' + webhook_token);
-//console.log('PRODUCTION_URL ' + production_url);
-//console.log('TEST_URL ' + test_url);
 
 const client = new Client({
     intents: [
