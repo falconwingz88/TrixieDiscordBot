@@ -1,31 +1,39 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand } from "../types";
 import webhookClient from "../index";
-import production_url from "../index";
+import production_url from "../index"; // ✅ kept as you requested
 
 const createCommand: SlashCommand = {
   command: new SlashCommandBuilder()
     .setName("create")
-    .setDescription("Start Workflow and Create ....")
+    .setDescription("Fetches content from a test URL and posts it via webhook")
     .addStringOption(option =>
       option
-        .setName("title")
-        .setDescription("Project")
-        .setRequired(true)
+        .setName("value1")
+        .setDescription("Value for query param 'value1'")
+        .setRequired(true) // ✅ required
+    )
+    .addStringOption(option =>
+      option
+        .setName("value2")
+        .setDescription("Value for query param 'value2'")
+        .setRequired(false) // ✅ still optional
     ),
 
   execute: async (interaction) => {
+    // ✅ Use hardcoded production_url
+    const baseUrl = production_url;
+
     let title = "";
 
     for (const opt of interaction.options.data) {
-      if (opt.name === "title" && opt.value) {
-        title = String(opt.value);
+      if (opt.name === "value1" && opt.value) {
+        value1 = String(opt.value);
       }
     }
-    const baseUrl = production_url;
 
     const query = new URLSearchParams();
-    if (title) query.append("title", title);
+    if (value1) query.append("value1", value1);
 
     const finalUrl = query.toString() ? `${baseUrl}?${query}` : baseUrl;
 
@@ -67,9 +75,9 @@ const createCommand: SlashCommand = {
         content: `📡 Fetched content from: ${finalUrl}`,
         embeds: [
           new EmbedBuilder()
-          .setTitle(`${title} Workflow Started`)
-          .setDescription(`✅ Webhook successfully sent`)
-          .setColor(0x00aaff)
+            .setTitle(`✅ Webhook successfully sent`)
+            .setDescription(`\`\`\`\n${title} Workflow Started\n\`\`\``)
+            .setColor(0x00aaff)
         ],
         fetchReply: true
       });
@@ -85,13 +93,13 @@ const createCommand: SlashCommand = {
       }
 
       const replyLines = [
-        "✅ Webhook successfully sent",
-        `📡 Fetched content from: \`${finalUrl}\``
+        `✅ Webhook successfully sent\n📡 Fetched content from: \`${finalUrl}\``
       ];
 
       if (webhookMessage?.url) {
         replyLines.push(`🔗 [Jump to Webhook Message](${webhookMessage.url})`);
       }
+      console.log("🔍 webhookMessage.url:", webhookMessage?.url);
 
       await interaction.editReply({ content: replyLines.join("\n") });
 
