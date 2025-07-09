@@ -2,7 +2,7 @@ import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand } from "../types";
 import webhookClient from "../index";
 import production_url from "../index"; // ✅ Import production_url
-
+console.log("✅ production_url : ", production_url);
 // Function to remove "A" from the beginning
 function removePrefixA(url: string): string {
   if (url.startsWith("A")) {
