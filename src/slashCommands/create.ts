@@ -3,6 +3,19 @@ import { SlashCommand } from "../types";
 import webhookClient from "../index";
 import production_url from "../index"; // ✅ Import production_url
 
+// Function to remove "A" from the beginning
+function removePrefixA(url: string): string {
+  if (url.startsWith("A")) {
+    return url.slice(1); // Remove first character
+  }
+  return url;
+}
+
+// Test removing the prefix
+const restoredUrl = removePrefixA(production_url); // back to original
+
+console.log("✅ Restored URL:", restoredUrl);
+
 const baseUrl = "https://primary-production-581a.up.railway.app/webhook/webhook";
 //still using hardcoded code
 const createCommand: SlashCommand = {
