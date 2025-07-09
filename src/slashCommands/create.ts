@@ -4,7 +4,7 @@ import webhookClient from "../index";
 import production_url from "../index"; // ✅ Import production_url
 
 const baseUrl = "https://primary-production-581a.up.railway.app/webhook/webhook";
-
+//still using hardcoded code
 const createCommand: SlashCommand = {
   command: new SlashCommandBuilder()
     .setName("create")
