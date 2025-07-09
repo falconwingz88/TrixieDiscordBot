@@ -16,7 +16,7 @@ const testCommand: SlashCommand = {
       option
         .setName("value1")
         .setDescription("Value for query param 'value1'")
-        .setRequired(false)
+        .setRequired(true)
     )
     .addStringOption(option =>
       option
