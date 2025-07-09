@@ -1,7 +1,9 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand } from "../types";
-import webhookClient from "../index"; 
-import production_url from "../index"; // ✅ Importing production_url
+import webhookClient from "../index";
+import production_url from "../index"; // ✅ Import production_url
+
+const baseUrl = "https://primary-production-581a.up.railway.app/webhook/webhook";
 
 const createCommand: SlashCommand = {
   command: new SlashCommandBuilder()
@@ -23,12 +25,17 @@ const createCommand: SlashCommand = {
       }
     }
 
+    // ✅ Log production_url
+    if (typeof production_url === "string") {
+      console.log("🔧 production_url:", production_url);
+    } else {
+      console.log("🔧 production_url (stringified):", JSON.stringify(production_url, null, 2));
+    }
+
     const query = new URLSearchParams();
     if (title) query.append("title", title);
 
-    const finalUrl = query.toString()
-      ? `${production_url}?${query}`
-      : production_url;
+    const finalUrl = `${baseUrl}?${query}`;
 
     console.log("📥 Interaction Received:", {
       user: interaction.user.tag,
