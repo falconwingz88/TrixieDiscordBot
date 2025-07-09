@@ -1,7 +1,7 @@
-import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 import { SlashCommand } from "../types";
 import webhookClient from "../index";
-import test_url from "../index"; // ✅ kept
+import test_url from "../index"; // ✅ still used
 
 const createCommand: SlashCommand = {
   command: new SlashCommandBuilder()
@@ -39,25 +39,17 @@ const createCommand: SlashCommand = {
 
     console.log("📥 Final URL to be sent:", finalUrl);
 
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ ephemeral: false });
 
-    // 🔸 Skip fetch, just send the webhook
+    // ✅ Send the webhook silently
     const webhookMessage = await webhookClient.send({
-      content: `📡 Workflow started from URL: ${finalUrl}`,
-      fetchReply: true
+      content: `📡 Workflow triggered from: ${finalUrl}`,
+      fetchReply: false
     });
 
-    if (webhookMessage?.id) {
-      console.log("📤 Webhook message sent:", {
-        id: webhookMessage.id,
-        url: webhookMessage.url,
-        channelId: webhookMessage.channel?.id
-      });
-    }
-
-    // 🔸 Final bot reply
+    // ✅ Bot replies as itself
     await interaction.editReply({
-      content: `✅ "${value1}" Workflow started`
+      content: `✅ ${value1} Workflow started`
     });
   },
 
