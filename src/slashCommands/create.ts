@@ -1,23 +1,8 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand } from "../types";
 import webhookClient from "../index";
-/*
-// Function to remove "A" from the beginning
-function removePrefixA(url: string): string {
-  if (url.startsWith("A")) {
-    return url.slice(1); // Remove first character
-  }
-  return url;
-}
-
-// Test removing the prefix
-const restoredUrl = removePrefixA(production_url); // back to original
-
-console.log("✅ Restored URL: ", restoredUrl);
-*/
-//const importUrl = import production_url from "../index";
-//console.log("✅ importUrl : ", importUrl);
-
+import production_url from "../index";
+console.log("production url: " + production_url);
 const baseUrl = "https://primary-production-581a.up.railway.app/webhook/webhook";
 //still using hardcoded code
 const createCommand: SlashCommand = {
@@ -39,7 +24,6 @@ const createCommand: SlashCommand = {
         title = String(opt.value);
       }
     }
-    const importUrl = import production_url from "../index";
     // ✅ Log production_url
     if (typeof production_url === "string") {
       console.log("🔧 production_url:", production_url);
@@ -50,7 +34,7 @@ const createCommand: SlashCommand = {
     const query = new URLSearchParams();
     if (title) query.append("title", title);
 
-    const finalUrl = `${importUrl}?${query}`;
+    const finalUrl = `${baseUrl}?${query}`;
 
     console.log("📥 Interaction Received:", {
       user: interaction.user.tag,
