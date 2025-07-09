@@ -6,18 +6,12 @@ import production_url from "../index"; // ✅ kept as you requested
 const createCommand: SlashCommand = {
   command: new SlashCommandBuilder()
     .setName("create")
-    .setDescription("Fetches content from a test URL and posts it via webhook")
+    .setDescription("Start Workflow and Create...")
     .addStringOption(option =>
       option
-        .setName("value1")
-        .setDescription("Value for query param 'value1'")
+        .setName("title")
+        .setDescription("Project Name")
         .setRequired(true) // ✅ required
-    )
-    .addStringOption(option =>
-      option
-        .setName("value2")
-        .setDescription("Value for query param 'value2'")
-        .setRequired(false) // ✅ still optional
     ),
 
   execute: async (interaction) => {
