@@ -20,6 +20,7 @@ const token = process.env.DISCORD_TOKEN; // Token from Railway Env Variable.
 const client_id = process.env.CLIENT_ID;
 const webhookt_id = process.env.WEBHOOK_ID;
 const webhook_token = process.env.WEBHOOK_TOKEN;
+const webhook_token = process.env.WEBHOOK_TOKEN;
 console.log('DISCORD TOKEN ' + token);
 console.log('CLIENT_ID ' + client_id);
 console.log('WEBHOOK_ID ' + webhookt_id);
