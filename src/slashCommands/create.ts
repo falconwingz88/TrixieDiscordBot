@@ -1,8 +1,6 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand } from "../types";
 import webhookClient from "../index";
-import production_url from "../index"; // ✅ Import production_url
-console.log("✅ production_url : ", production_url);
 /*
 // Function to remove "A" from the beginning
 function removePrefixA(url: string): string {
@@ -17,6 +15,9 @@ const restoredUrl = removePrefixA(production_url); // back to original
 
 console.log("✅ Restored URL: ", restoredUrl);
 */
+const importUrl = import production_url from "../index";
+console.log("✅ importUrl : ", importUrl);
+
 const baseUrl = "https://primary-production-581a.up.railway.app/webhook/webhook";
 //still using hardcoded code
 const createCommand: SlashCommand = {
