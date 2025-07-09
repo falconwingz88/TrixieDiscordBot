@@ -1,3 +1,4 @@
+config.log(start index.ts);
 import {
     Client,
     Events,
