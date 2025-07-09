@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "discord.js";
 import { SlashCommand } from "../types";
 import webhookClient from "../index";
-import test_url from "../index"; // ✅ still used
+import production_url from "../index"; // ✅ still used
 
 const createCommand: SlashCommand = {
   command: new SlashCommandBuilder()
@@ -21,7 +21,7 @@ const createCommand: SlashCommand = {
     ),
 
   execute: async (interaction) => {
-    const baseUrl = test_url;
+    const baseUrl = production_url;
 
     let value1 = "";
     let value2 = "";
