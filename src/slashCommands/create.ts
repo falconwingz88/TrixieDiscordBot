@@ -21,13 +21,13 @@ const createCommand: SlashCommand = {
     let title = "";
 
     for (const opt of interaction.options.data) {
-      if (opt.name === "value1" && opt.value) {
-        value1 = String(opt.value);
+      if (opt.name === "title" && opt.value) {
+        title = String(opt.value);
       }
     }
 
     const query = new URLSearchParams();
-    if (value1) query.append("value1", value1);
+    if (title) query.append("title", title);
 
     const finalUrl = query.toString() ? `${baseUrl}?${query}` : baseUrl;
 
