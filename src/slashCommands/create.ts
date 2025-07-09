@@ -5,9 +5,9 @@ import webhookClient from "../index";
 //import production_url from "../index";
 
 const production_url = process.env.PRODUCTION_URL;
-console.log("production url: " + production_url);
+console.log('PRODUCTION_URL ' + production_url);
 
-const baseUrl = "https://primary-production-581a.up.railway.app/webhook/webhook";
+const baseUrl = production_url;
 //still using hardcoded code
 const createCommand: SlashCommand = {
   command: new SlashCommandBuilder()
