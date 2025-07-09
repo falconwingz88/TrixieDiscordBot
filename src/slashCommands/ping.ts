@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand } from "../types";
 import webhookClient from "../index";
+import test_url from "../index";
 
 const testCommand: SlashCommand = {
   command: new SlashCommandBuilder()
