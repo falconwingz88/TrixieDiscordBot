@@ -1,8 +1,12 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand } from "../types";
+import dotenv from "dotenv";
 import webhookClient from "../index";
-import production_url from "../index";
+//import production_url from "../index";
+
+const production_url = process.env.PRODUCTION_URL;
 console.log("production url: " + production_url);
+
 const baseUrl = "https://primary-production-581a.up.railway.app/webhook/webhook";
 //still using hardcoded code
 const createCommand: SlashCommand = {
