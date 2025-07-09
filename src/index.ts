@@ -42,8 +42,8 @@ console.log('DISCORD TOKEN ' + token);
 console.log('CLIENT_ID ' + client_id);
 console.log('WEBHOOK_ID ' + webhook_id);
 console.log('WEBHOOK_TOKEN ' + webhook_token);
-console.log('PRODUCTION_URL ' + production_url);
-console.log('TEST_URL ' + test_url);
+//console.log('PRODUCTION_URL ' + production_url);
+//console.log('TEST_URL ' + test_url);
 
 const client = new Client({
     intents: [
