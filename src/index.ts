@@ -15,7 +15,6 @@ import dotenv from "dotenv";
 dotenv.config();
 import testCommand from "./slashCommands/ping";
 import helloCommand from "./slashCommands/hello";
-import helloCommand from "./slashCommands/hello";
 import createCommand from "./slashCommands/create";
 
 const token = process.env.DISCORD_TOKEN; // Token from Railway Env Variable.
