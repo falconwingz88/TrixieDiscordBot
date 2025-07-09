@@ -1,35 +1,103 @@
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand } from "../types";
-import fetch from "node-fetch"; // make sure it's installed or use global fetch in Node 18+
+import webhookClient from "../index";
+import production_url from "../index";
 
 const createCommand: SlashCommand = {
   command: new SlashCommandBuilder()
     .setName("create")
-    .setDescription("Bot sends a request to a webhook and confirms it."),
+    .setDescription("Fetches content from a URL and posts it via webhook")
+    .addStringOption(option =>
+      option
+        .setName("title")
+        .setDescription("Value for query param 'title'")
+        .setRequired(true)
+    ),
 
   execute: async (interaction) => {
-    const url = "https://primary-production-581a.up.railway.app/webhook/webhook?value1=123";
+    let title = "";
 
-    await interaction.deferReply();
+    for (const opt of interaction.options.data) {
+      if (opt.name === "title" && opt.value) {
+        title = String(opt.value);
+      }
+    }
+
+    const query = new URLSearchParams();
+    if (title) query.append("title", title);
+
+    const finalUrl = `${production_url}?${query.toString()}`;
+
+    console.log("📥 Interaction Received:", {
+      user: interaction.user.tag,
+      command: interaction.commandName,
+      finalUrl
+    });
+
+    await interaction.deferReply({ ephemeral: true });
 
     try {
-      const res = await fetch(url);
-      console.log(`✅ Webhook sent. Status: ${res.status}`);
+      const res = await fetch(finalUrl);
+      const contentType = res.headers.get("content-type");
 
-      await interaction.editReply({
-        content: `✅ Sent request to: ${url}`
-      });
+      console.log(`🌐 Fetched URL: ${finalUrl}`);
+      console.log(`↩️ Response status: ${res.status} ${res.statusText}`);
+      console.log(`📄 Content-Type: ${contentType}`);
 
-      // Bot says something in the channel too (public message)
-      const channel = interaction.channel;
-      if (channel?.isTextBased()) {
-        channel.send("📡 The workflow was triggered!");
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
       }
 
+      let text: string;
+      if (contentType?.includes("application/json")) {
+        const json = await res.json();
+        text = JSON.stringify(json, null, 2);
+      } else {
+        text = await res.text();
+      }
+
+      console.log("📝 Raw fetched content:", text.length > 500 ? text.slice(0, 500) + "...[truncated]" : text);
+
+      if (text.length > 1900) {
+        text = text.slice(0, 1900) + "\n...[truncated]";
+      }
+
+      const webhookMessage = await webhookClient.send({
+        content: `📡 Fetched content from: ${finalUrl}`,
+        embeds: [
+          new EmbedBuilder()
+          .setTitle(`${title} Workflow Started`)
+          .setDescription(`✅ Webhook successfully sent`)
+          .setColor(0x00aaff)
+        ],
+        fetchReply: true
+      });
+
+      if (webhookMessage?.id) {
+        console.log("📤 Webhook message sent:", {
+          id: webhookMessage.id,
+          url: webhookMessage.url,
+          channelId: webhookMessage.channel?.id
+        });
+      } else {
+        console.warn("⚠️ Webhook sent, but no message object was returned.");
+      }
+
+      const replyLines = [
+        "✅ Webhook successfully sent",
+        `📡 Fetched content from: \`${finalUrl}\``
+      ];
+
+      if (webhookMessage?.url) {
+        replyLines.push(`🔗 [Jump to Webhook Message](${webhookMessage.url})`);
+      }
+
+      await interaction.editReply({ content: replyLines.join("\n") });
+
     } catch (error: any) {
-      console.error("❌ Error sending webhook:", error);
+      console.error("❌ Fetch or send error:", error);
       await interaction.editReply({
-        content: `❌ Failed to send webhook: ${error.message}`
+        content: `❌ Failed to fetch from URL: ${error.message}`
       });
     }
   },
