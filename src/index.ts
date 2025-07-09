@@ -17,14 +17,14 @@ import testCommand from "./slashCommands/ping";
 import helloCommand from "./slashCommands/hello";
 import createCommand from "./slashCommands/create";
 
-const token = process.env.DISCORD_TOKEN; // Token from Railway Env Variable.
-const client_id = process.env.CLIENT_ID;
+await const token = process.env.DISCORD_TOKEN; // Token from Railway Env Variable.
+await const client_id = process.env.CLIENT_ID;
 
-const webhook_id = process.env.WEBHOOK_ID;
-const webhook_token = process.env.WEBHOOK_TOKEN;
+await const webhook_id = process.env.WEBHOOK_ID;
+await const webhook_token = process.env.WEBHOOK_TOKEN;
 
-export const production_url = process.env.PRODUCTION_URL;
-export const test_url = process.env.TEST_URL;
+await export const production_url = process.env.PRODUCTION_URL;
+await export const test_url = process.env.TEST_URL;
 /*
 const originalUrl = production_url_raw;
 
