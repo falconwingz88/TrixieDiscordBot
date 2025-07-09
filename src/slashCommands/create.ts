@@ -2,15 +2,15 @@ import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand } from "../types";
 import webhookClient from "../index";
 import production_url from "../index";
-
+console.log("procution url: " + production_url);
 const createCommand: SlashCommand = {
   command: new SlashCommandBuilder()
     .setName("create")
-    .setDescription("Fetches content from a URL and posts it via webhook")
+    .setDescription("Start Workflow and Create ....")
     .addStringOption(option =>
       option
         .setName("title")
-        .setDescription("Value for query param 'title'")
+        .setDescription("Project")
         .setRequired(true)
     ),
 
@@ -22,11 +22,12 @@ const createCommand: SlashCommand = {
         title = String(opt.value);
       }
     }
+    const baseUrl = production_url;
 
     const query = new URLSearchParams();
     if (title) query.append("title", title);
 
-    const finalUrl = `${production_url}?${query.toString()}`;
+    const finalUrl = `${baseUrl}?${query.toString()}`;
 
     console.log("📥 Interaction Received:", {
       user: interaction.user.tag,
