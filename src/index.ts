@@ -23,9 +23,8 @@ const client_id = process.env.CLIENT_ID;
 const webhook_id = process.env.WEBHOOK_ID;
 const webhook_token = process.env.WEBHOOK_TOKEN;
 
-const production_url_raw = process.env.PRODUCTION_URL;
-const production_url = production_url_raw
-const test_url = process.env.TEST_URL;
+export const production_url = process.env.PRODUCTION_URL;
+export const test_url = process.env.TEST_URL;
 
 console.log('DISCORD TOKEN ' + token);
 console.log('CLIENT_ID ' + client_id);
