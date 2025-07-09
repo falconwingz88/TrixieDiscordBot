@@ -2,9 +2,9 @@ import { SlashCommandBuilder } from "discord.js";
 import { SlashCommand } from "../types";
 import fetch from "node-fetch"; // make sure it's installed or use global fetch in Node 18+
 
-const sendWebhookCommand: SlashCommand = {
+const createCommand: SlashCommand = {
   command: new SlashCommandBuilder()
-    .setName("sendwebhook")
+    .setName("create")
     .setDescription("Bot sends a request to a webhook and confirms it."),
 
   execute: async (interaction) => {
@@ -37,4 +37,4 @@ const sendWebhookCommand: SlashCommand = {
   cooldown: 3
 };
 
-export default sendWebhookCommand;
+export default createCommand;
