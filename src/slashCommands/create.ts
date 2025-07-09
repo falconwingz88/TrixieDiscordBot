@@ -1,23 +1,19 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand } from "../types";
-import webhookClient from "../index";
-import production_url from "../index"; // ✅ kept as you requested
+import webhookClient, { production_url } from "../index"; // ✅ Importing production_url
 
-const createCommand: SlashCommand = {
+const testCommand: SlashCommand = {
   command: new SlashCommandBuilder()
-    .setName("create")
-    .setDescription("Start Workflow and Create...")
+    .setName("test")
+    .setDescription("Starts a workflow and posts via webhook")
     .addStringOption(option =>
       option
         .setName("title")
-        .setDescription("Project Name")
-        .setRequired(true) // ✅ required
+        .setDescription("Title for the workflow")
+        .setRequired(true)
     ),
 
   execute: async (interaction) => {
-    // ✅ Use hardcoded production_url
-    const baseUrl = production_url;
-
     let title = "";
 
     for (const opt of interaction.options.data) {
@@ -26,10 +22,13 @@ const createCommand: SlashCommand = {
       }
     }
 
+    // Build URL using imported production_url
     const query = new URLSearchParams();
     if (title) query.append("title", title);
 
-    const finalUrl = query.toString() ? `${baseUrl}?${query}` : baseUrl;
+    const finalUrl = query.toString()
+      ? `${production_url}?${query}`
+      : production_url;
 
     console.log("📥 Interaction Received:", {
       user: interaction.user.tag,
@@ -69,8 +68,8 @@ const createCommand: SlashCommand = {
         content: `📡 Fetched content from: ${finalUrl}`,
         embeds: [
           new EmbedBuilder()
-            .setTitle(`✅ Webhook successfully sent`)
-            .setDescription(`\`\`\`\n${title} Workflow Started\n\`\`\``)
+            .setTitle(`${title} Workflow Started`)
+            .setDescription(`✅ Webhook successfully sent`)
             .setColor(0x00aaff)
         ],
         fetchReply: true
@@ -87,13 +86,13 @@ const createCommand: SlashCommand = {
       }
 
       const replyLines = [
-        `✅ Webhook successfully sent\n📡 Fetched content from: \`${finalUrl}\``
+        "✅ Webhook successfully sent",
+        `📡 Fetched content from: \`${finalUrl}\``
       ];
 
-      if (webhookMessage?.url) {
+      if (typeof webhookMessage?.url === "string") {
         replyLines.push(`🔗 [Jump to Webhook Message](${webhookMessage.url})`);
       }
-      console.log("🔍 webhookMessage.url:", webhookMessage?.url);
 
       await interaction.editReply({ content: replyLines.join("\n") });
 
@@ -108,4 +107,4 @@ const createCommand: SlashCommand = {
   cooldown: 3
 };
 
-export default createCommand;
+export default testCommand;
