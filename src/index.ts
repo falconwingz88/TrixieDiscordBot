@@ -63,7 +63,7 @@ webhookClient.send({
 const slashCommands = new Collection<string, SlashCommand>()
 
 slashCommands.set(helloCommand.command.name, helloCommand)
-slashCommands.set(helloCommand.command.name, createCommand)
+slashCommands.set(createCommand.command.name, createCommand)
 slashCommands.set(testCommand.command.name, testCommand)
 
 const slashCommandsArr: SlashCommandBuilder[] = [helloCommand.command, createCommand.command,testCommand.command]
