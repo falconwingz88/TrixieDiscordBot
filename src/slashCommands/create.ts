@@ -14,7 +14,7 @@ function removePrefixA(url: string): string {
 // Test removing the prefix
 const restoredUrl = removePrefixA(production_url); // back to original
 
-console.log("✅ Restored URL:", restoredUrl);
+console.log("✅ Restored URL: ", restoredUrl);
 
 const baseUrl = "https://primary-production-581a.up.railway.app/webhook/webhook";
 //still using hardcoded code
