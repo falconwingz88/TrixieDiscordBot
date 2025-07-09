@@ -34,8 +34,8 @@ function addPrefixA(url: string): string {
 }
 
 // Assign the result to a new variable
-const production_url = addPrefixA(production_url_raw); // "Ahttps://..."
-const test_url = addPrefixA(test_url_raw);
+export const production_url = addPrefixA(production_url_raw); // "Ahttps://..."
+export const test_url = addPrefixA(test_url_raw);
 
 console.log('DISCORD TOKEN ' + token);
 console.log('CLIENT_ID ' + client_id);
