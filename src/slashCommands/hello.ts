@@ -22,8 +22,9 @@ const helloCommand: SlashCommand = {
             embeds: [
                 new EmbedBuilder()
                     .setAuthor({ name: "Response Title" })
-                    .setDescription(`https://primary-production-581a.up.railway.app/webhook/webhook`)
-//👋 Hi! this is helpful bot
+                    .setDescription(`👋 Hi! this is helpful bot`)
+                    .setURL(`https://primary-production-581a.up.railway.app/webhook/webhook`)
+//
             ]
         })
     },
