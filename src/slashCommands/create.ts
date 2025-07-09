@@ -1,59 +1,40 @@
 import { SlashCommandBuilder } from "discord.js";
 import { SlashCommand } from "../types";
-import webhookClient from "../index";
-import production_url from "../index"; // ✅ still used
+import fetch from "node-fetch"; // make sure it's installed or use global fetch in Node 18+
 
-const createCommand: SlashCommand = {
+const sendWebhookCommand: SlashCommand = {
   command: new SlashCommandBuilder()
-    .setName("create")
-    .setDescription("Starts a workflow using the provided value1 parameter")
-    .addStringOption(option =>
-      option
-        .setName("value1")
-        .setDescription("Value for query param 'value1'")
-        .setRequired(true)
-    )
-    .addStringOption(option =>
-      option
-        .setName("value2")
-        .setDescription("Value for query param 'value2'")
-        .setRequired(false)
-    ),
+    .setName("sendwebhook")
+    .setDescription("Bot sends a request to a webhook and confirms it."),
 
   execute: async (interaction) => {
-    const baseUrl = production_url;
+    const url = "https://primary-production-581a.up.railway.app/webhook/webhook?value1=123";
 
-    let value1 = "";
-    let value2 = "";
+    await interaction.deferReply();
 
-    for (const opt of interaction.options.data) {
-      if (opt.name === "value1" && opt.value) value1 = String(opt.value);
-      if (opt.name === "value2" && opt.value) value2 = String(opt.value);
+    try {
+      const res = await fetch(url);
+      console.log(`✅ Webhook sent. Status: ${res.status}`);
+
+      await interaction.editReply({
+        content: `✅ Sent request to: ${url}`
+      });
+
+      // Bot says something in the channel too (public message)
+      const channel = interaction.channel;
+      if (channel?.isTextBased()) {
+        channel.send("📡 The workflow was triggered!");
+      }
+
+    } catch (error: any) {
+      console.error("❌ Error sending webhook:", error);
+      await interaction.editReply({
+        content: `❌ Failed to send webhook: ${error.message}`
+      });
     }
-
-    const query = new URLSearchParams();
-    if (value1) query.append("value1", value1);
-    if (value2) query.append("value2", value2);
-
-    const finalUrl = query.toString() ? `${baseUrl}?${query}` : baseUrl;
-
-    console.log("📥 Final URL to be sent:", finalUrl);
-
-    await interaction.deferReply({ ephemeral: false });
-
-    // ✅ Send the webhook silently
-    const webhookMessage = await webhookClient.send({
-      content: `📡 Workflow triggered from: ${finalUrl}`,
-      fetchReply: false
-    });
-
-    // ✅ Bot replies as itself
-    await interaction.editReply({
-      content: `✅ ${value1} Workflow started`
-    });
   },
 
   cooldown: 3
 };
 
-export default createCommand;
+export default sendWebhookCommand;
