@@ -55,8 +55,8 @@ const embed = new EmbedBuilder()
 
 webhookClient.send({
 	content: 'Bot Testing Ready',
-	username: 'some-username',
-	avatarURL: 'https://i.imgur.com/AfFp7pu.png',
+	//username: 'some-username',
+	//avatarURL: 'https://i.imgur.com/AfFp7pu.png',
 	embeds: [embed]
 });
 
