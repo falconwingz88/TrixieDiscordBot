@@ -5,7 +5,9 @@ import webhookClient from "../index";
 //import production_url from "../index";
 
 const production_url = process.env.PRODUCTION_URL;
+const test_url = process.env.TEST_URL;
 console.log('PRODUCTION_URL ' + production_url);
+console.log('TEST_URL ' + test_url);
 
 const baseUrl = production_url;
 const createCommand: SlashCommand = {
