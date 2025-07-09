@@ -14,8 +14,8 @@ import { readdirSync } from "fs";
 import dotenv from "dotenv";
 dotenv.config();
 
-export const production_url = process.env.PRODUCTION_URL;
-export const test_url = process.env.TEST_URL;
+//export const production_url = process.env.PRODUCTION_URL;
+//export const test_url = process.env.TEST_URL;
 const token = process.env.DISCORD_TOKEN; // Token from Railway Env Variable.
 const client_id = process.env.CLIENT_ID;
 const webhook_id = process.env.WEBHOOK_ID;
