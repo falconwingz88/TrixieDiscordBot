@@ -8,7 +8,6 @@ const production_url = process.env.PRODUCTION_URL;
 console.log('PRODUCTION_URL ' + production_url);
 
 const baseUrl = production_url;
-//still using hardcoded code
 const createCommand: SlashCommand = {
   command: new SlashCommandBuilder()
     .setName("create")
