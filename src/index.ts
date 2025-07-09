@@ -22,7 +22,6 @@ const token = process.env.DISCORD_TOKEN; // Token from Railway Env Variable.
 const client_id = process.env.CLIENT_ID;
 const webhookt_id = process.env.WEBHOOK_ID;
 const webhook_token = process.env.WEBHOOK_TOKEN;
-const webhook_token = process.env.WEBHOOK_TOKEN;
 const production_url = process.env.PRODUCTION_URL;
 const test_url = process.env.TEST_URL;
 
@@ -61,9 +60,12 @@ webhookClient.send({
 });
 
 const slashCommands = new Collection<string, SlashCommand>()
-slashCommands.set(testCommand.command.name, testCommand)
+
 slashCommands.set(helloCommand.command.name, helloCommand)
-const slashCommandsArr: SlashCommandBuilder[] = [testCommand.command, helloCommand.command]
+slashCommands.set(helloCommand.command.name, createCommand)
+slashCommands.set(testCommand.command.name, testCommand)
+
+const slashCommandsArr: SlashCommandBuilder[] = [helloCommand.command, createCommand.command,testCommand.command]
 console.log(slashCommandsArr);
 const rest = new REST({ version: "10" }).setToken(token);
 rest.put(Routes.applicationCommands(client_id), {
