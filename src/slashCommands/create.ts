@@ -2,7 +2,7 @@ import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand } from "../types";
 import webhookClient from "../index";
 import production_url from "../index";
-console.log("procution url: " + production_url);
+
 const createCommand: SlashCommand = {
   command: new SlashCommandBuilder()
     .setName("create")
@@ -27,7 +27,7 @@ const createCommand: SlashCommand = {
     const query = new URLSearchParams();
     if (title) query.append("title", title);
 
-    const finalUrl = `${baseUrl}?${query.toString()}`;
+    const finalUrl = query.toString() ? `${baseUrl}?${query}` : baseUrl;
 
     console.log("📥 Interaction Received:", {
       user: interaction.user.tag,
