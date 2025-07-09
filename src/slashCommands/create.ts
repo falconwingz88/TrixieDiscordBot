@@ -15,8 +15,8 @@ const restoredUrl = removePrefixA(production_url); // back to original
 
 console.log("✅ Restored URL: ", restoredUrl);
 */
-const importUrl = import production_url from "../index";
-console.log("✅ importUrl : ", importUrl);
+//const importUrl = import production_url from "../index";
+//console.log("✅ importUrl : ", importUrl);
 
 const baseUrl = "https://primary-production-581a.up.railway.app/webhook/webhook";
 //still using hardcoded code
@@ -39,7 +39,7 @@ const createCommand: SlashCommand = {
         title = String(opt.value);
       }
     }
-
+    const importUrl = import production_url from "../index";
     // ✅ Log production_url
     if (typeof production_url === "string") {
       console.log("🔧 production_url:", production_url);
@@ -50,7 +50,7 @@ const createCommand: SlashCommand = {
     const query = new URLSearchParams();
     if (title) query.append("title", title);
 
-    const finalUrl = `${baseUrl}?${query}`;
+    const finalUrl = `${importUrl}?${query}`;
 
     console.log("📥 Interaction Received:", {
       user: interaction.user.tag,
