@@ -2,9 +2,9 @@ import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand } from "../types";
 import webhookClient, { production_url } from "../index"; // ✅ Importing production_url
 
-const testCommand: SlashCommand = {
+const createCommand: SlashCommand = {
   command: new SlashCommandBuilder()
-    .setName("test")
+    .setName("create")
     .setDescription("Starts a workflow and posts via webhook")
     .addStringOption(option =>
       option
@@ -22,7 +22,6 @@ const testCommand: SlashCommand = {
       }
     }
 
-    // Build URL using imported production_url
     const query = new URLSearchParams();
     if (title) query.append("title", title);
 
@@ -107,4 +106,4 @@ const testCommand: SlashCommand = {
   cooldown: 3
 };
 
-export default testCommand;
+export default createCommand;
