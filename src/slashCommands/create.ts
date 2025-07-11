@@ -1,11 +1,11 @@
-import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
+import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction } from "discord.js";
 import { SlashCommand } from "../types";
 import dotenv from "dotenv";
 import webhookClient from "../index";
 
 dotenv.config();
 
-const production_url = process.env.PRODUCTION_URL;
+const production_url = process.env.PRODUCTION_URL!;
 const baseUrl = production_url;
 
 const trixieCommand: SlashCommand = {
@@ -19,8 +19,8 @@ const trixieCommand: SlashCommand = {
         .setRequired(true)
         .addChoices(
           { name: "create", value: "create" },
-          { name: "chat", value: "chat" },
-          { name: "parse", value: "parse" }
+          { name: "chat",   value: "chat" },
+          { name: "parse",  value: "parse" }
         )
     )
     .addStringOption(option =>
@@ -30,13 +30,13 @@ const trixieCommand: SlashCommand = {
         .setRequired(true)
     ),
 
-  execute: async (interaction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const command = interaction.options.getString("command", true);
-    const data = interaction.options.getString("data", true);
+    const data    = interaction.options.getString("data",    true);
 
     const query = new URLSearchParams();
     query.append("command", command);
-    query.append("data", data);
+    query.append("data",    data);
 
     const finalUrl = `${baseUrl}?${query.toString()}`;
 
@@ -57,9 +57,7 @@ const trixieCommand: SlashCommand = {
       console.log(`↩️ Response status: ${res.status} ${res.statusText}`);
       console.log(`📄 Content-Type: ${contentType}`);
 
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-      }
+      if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
 
       let text: string;
       if (contentType?.includes("application/json")) {
@@ -69,7 +67,10 @@ const trixieCommand: SlashCommand = {
         text = await res.text();
       }
 
-      console.log("📝 Raw fetched content:", text.length > 500 ? text.slice(0, 500) + "...[truncated]" : text);
+      console.log(
+        "📝 Raw fetched content:",
+        text.length > 500 ? text.slice(0, 500) + "...[truncated]" : text
+      );
 
       if (text.length > 1900) {
         text = text.slice(0, 1900) + "\n...[truncated]";
@@ -88,8 +89,8 @@ const trixieCommand: SlashCommand = {
 
       if (webhookMessage?.id) {
         console.log("📤 Webhook message sent:", {
-          id: webhookMessage.id,
-          url: webhookMessage.url,
+          id:        webhookMessage.id,
+          url:       webhookMessage.url,
           channelId: webhookMessage.channel?.id
         });
       } else {
