@@ -13,21 +13,10 @@ import { join } from "path";
 import { readdirSync } from "fs";
 import dotenv from "dotenv";
 dotenv.config();
+//import testCommand from "./slashCommands/ping";
 
 const token = process.env.DISCORD_TOKEN; // Token from Railway Env Variable.
 const client_id = process.env.CLIENT_ID;
-const webhook_id = process.env.WEBHOOK_ID;
-const webhook_token = process.env.WEBHOOK_TOKEN;
-
-import testCommand from "./slashCommands/ping";
-import helloCommand from "./slashCommands/hello";
-import createCommand from "./slashCommands/create";
-
-console.log('DISCORD TOKEN ' + token);
-console.log('CLIENT_ID ' + client_id);
-console.log('WEBHOOK_ID ' + webhook_id);
-console.log('WEBHOOK_TOKEN ' + webhook_token);
-
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -38,31 +27,34 @@ const client = new Client({
 client.once(Events.ClientReady, async (c) => {
     console.log(`Logged in as ${c.user.tag}`);
 });
-console.log("jweqioweqeqww");
-//webhook
-const { EmbedBuilder, WebhookClient } = require('discord.js');
+console.log("jweqioweqeqww discord online");
 
-const webhookClient = new WebhookClient({ id: webhook_id, token: webhook_token });
-export default webhookClient;
-const embed = new EmbedBuilder()
-	.setTitle('Ready')
-	.setColor(0x00FFFF);
+//const slashCommands = new Collection<string, SlashCommand>()
+//slashCommands.set(testCommand.command.name, testCommand)
+//const slashCommandsArr: SlashCommandBuilder[] = [testCommand.command]
+const slashCommands = new Collection<string, SlashCommand>();
+const slashCommandsArr: SlashCommandBuilder[] = [];
 
-webhookClient.send({
-	content: 'Bot Testing Ready',
-	//username: 'some-username',
-	//avatarURL: 'https://i.imgur.com/AfFp7pu.png',
-	embeds: [embed]
-});
+const commandsPath = join(__dirname, "slashCommands");
+const commandFiles = readdirSync(commandsPath).filter(file =>
+  file.endsWith(".ts")
+);
 
-const slashCommands = new Collection<string, SlashCommand>()
+for (const file of commandFiles) {
+  const filePath = join(commandsPath, file);
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const command: SlashCommand = require(filePath).default;
 
-slashCommands.set(helloCommand.command.name, helloCommand)
-slashCommands.set(createCommand.command.name, createCommand)
-slashCommands.set(testCommand.command.name, testCommand)
+  if (!command?.command || !command?.execute) {
+    console.warn(`⚠️ Skipping invalid command file: ${file}`);
+    continue;
+  }
 
-const slashCommandsArr: SlashCommandBuilder[] = [helloCommand.command, createCommand.command,testCommand.command]
-console.log(slashCommandsArr);
+  slashCommands.set(command.command.name, command);
+  slashCommandsArr.push(command.command);
+}
+
+
 const rest = new REST({ version: "10" }).setToken(token);
 rest.put(Routes.applicationCommands(client_id), {
     body: slashCommandsArr.map(command => command.toJSON())
@@ -75,7 +67,7 @@ rest.put(Routes.applicationCommands(client_id), {
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
     const command = slashCommands.get(interaction.commandName);
-	console.log(command);
+
     if (!command) {
         console.error(`No command matching ${interaction.commandName} was found.`);
         return;
