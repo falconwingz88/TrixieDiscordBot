@@ -17,6 +17,7 @@ dotenv.config();
 
 const token = process.env.DISCORD_TOKEN; // Token from Railway Env Variable.
 const client_id = process.env.CLIENT_ID;
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -27,7 +28,7 @@ const client = new Client({
 client.once(Events.ClientReady, async (c) => {
     console.log(`Logged in as ${c.user.tag}`);
 });
-console.log("jweqioweqeqww discord online");
+console.log("jweqioweqeqww");
 
 //const slashCommands = new Collection<string, SlashCommand>()
 //slashCommands.set(testCommand.command.name, testCommand)
