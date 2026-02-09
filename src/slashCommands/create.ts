@@ -121,3 +121,4 @@ const trixieCommand: SlashCommand = {
 };
 
 export default trixieCommand;
+*/
