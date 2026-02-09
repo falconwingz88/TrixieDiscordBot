@@ -1,3 +1,4 @@
+/*
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand } from "../types";
 import webhookClient from "../index";
@@ -131,3 +132,4 @@ const testCommand: SlashCommand = {
 };
 
 export default testCommand;
+*/

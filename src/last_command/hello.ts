@@ -1,3 +1,4 @@
+/*
 import { SlashCommandBuilder, ChannelType, TextChannel, EmbedBuilder } from "discord.js"
 import { SlashCommand } from "../types";
 
@@ -31,3 +32,4 @@ const helloCommand: SlashCommand = {
 }
 
 export default helloCommand;
+*/
