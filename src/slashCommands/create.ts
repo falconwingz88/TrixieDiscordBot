@@ -1,3 +1,4 @@
+/*
 import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction } from "discord.js";
 import { SlashCommand } from "../types";
 import dotenv from "dotenv";
