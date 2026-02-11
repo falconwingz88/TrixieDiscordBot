@@ -20,6 +20,8 @@ const WEBHOOK_URL =
   "https://primary-production-cc89.up.railway.app/webhook/neotrix-sendupdates-to-notion";//send updates webhook url
 const EXTRACT_SLIDES_GUIDE_URL =
   "https://www.notion.so/neotrix/Selection-Distribution-Automation-2f1032d70c33807b8b35e20c4a496fbe";
+const REVISION_STATUS_UPDATE_URL = 
+  "https://primary-production-cc89.up.railway.app/webhook/neotrix-update-production-status-stage"; // revision webhook url
 
 /* =======================
    COMMAND
@@ -50,6 +52,43 @@ const trixieCommand: SlashCommand = {
       sub
         .setName("extract_slides")
         .setDescription("Extract slides and follow automation instructions")
+    )
+    .addSubcommand(sub =>
+      sub
+        .setName("revision")
+        .setDescription("Update revision status")
+        .addStringOption(option =>
+          option
+            .setName("stage")
+            .setDescription("Select production stage")
+            .setRequired(true)
+            .addChoices(
+              { name: "3D", value: "3D" },
+              { name: "Rendering", value: "Rendering" },
+              { name: "Animation", value: "Animation" }
+            )
+        )
+        .addStringOption(option =>
+          option
+            .setName("status")
+            .setDescription("Select revision status")
+            .setRequired(true)
+            .addChoices(
+              { name: "Not started", value: "Not started" },
+              { name: "In progress", value: "In progress" },
+              { name: "render queue", value: "render queue" },
+              { name: "Compositing", value: "Compositing" },
+              { name: "In Review", value: "In Review" },
+              { name: "Done", value: "Done" }
+            )
+        )
+        .addStringOption(option =>
+          option
+            .setName("revision_note")
+            .setDescription("Optional revision note")
+            .setRequired(false)
+        )
+
     ),
 
   async execute(interaction: ChatInputCommandInteraction) {
@@ -218,6 +257,75 @@ const trixieCommand: SlashCommand = {
         components: [row],
         ephemeral: false,
       });
+      return;
+    }
+    /* =======================
+        /trixie revision
+    ======================= */
+    if (sub === "revision") {
+      await interaction.deferReply({ ephemeral: false });
+
+      const selected_stage = interaction.options.getString("stage", true);
+      const status = interaction.options.getString("status", true);
+      const revisionNote = interaction.options.getString("revision_note") || "";
+
+      const channel = interaction.channel;
+      const isThread = channel?.isThread() ?? false;
+
+      let category = { id: null as string | null, name: null as string | null };
+
+      if (interaction.inGuild()) {
+        if (isThread) {
+          const parentCategory = channel?.parent?.parent;
+          if (parentCategory) {
+            category = { id: parentCategory.id, name: parentCategory.name };
+          }
+        } else {
+          const parentCategory = channel?.parent;
+          if (parentCategory) {
+            category = { id: parentCategory.id, name: parentCategory.name };
+          }
+        }
+      }
+      
+      try {
+        const response = await fetch(REVISION_STATUS_UPDATE_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user: {
+              id: interaction.user.id,
+              username: interaction.user.username,
+              tag: interaction.user.tag,
+            },
+            guild: interaction.guild
+              ? { id: interaction.guild.id, name: interaction.guild.name }
+              : null,
+            channel: {
+              id: interaction.channelId,
+              name: interaction.channel?.name ?? null,
+            },
+            category,
+            selected_stage,
+            status,
+            revision_note: revisionNote,
+            timestamp: new Date().toISOString(),
+            source: "revision_status_update",
+          }),
+        });
+
+        let reply = "⏳ Updating revision status...";
+        try {
+          const data = await response.json();
+          if (typeof data?.message === "string") reply = data.message;
+        } catch {}
+
+        await interaction.editReply(reply);
+      } catch (err) {
+        console.error(err);
+        await interaction.editReply("❌ Failed to update revision status.");
+      }
+
       return;
     }
   },
