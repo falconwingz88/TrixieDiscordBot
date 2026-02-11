@@ -304,6 +304,9 @@ const trixieCommand: SlashCommand = {
             channel: {
               id: interaction.channelId,
               name: interaction.channel?.name ?? null,
+              isThread,
+              threadId: isThread ? channel!.id : null,
+              parentChannelId: isThread ? channel!.parentId : null,
             },
             category,
             selected_stage,
