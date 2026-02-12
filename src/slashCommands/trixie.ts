@@ -65,7 +65,11 @@ const trixieCommand: SlashCommand = {
             .addChoices(
               { name: "3D", value: "3D" },
               { name: "Rendering", value: "Rendering" },
-              { name: "Animation", value: "Animation" }
+              { name: "Animation", value: "Animation" },
+              { name: "Modelling", value: "Modelling" },
+              { name: "Layout", value: "Layout" },
+              { name: "Lighting", value: "Lighting" },
+              { name: "Compositing", value: "Compositing" }
             )
         )
         .addStringOption(option =>
