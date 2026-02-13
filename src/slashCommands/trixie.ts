@@ -55,7 +55,7 @@ const trixieCommand: SlashCommand = {
     )
     .addSubcommand(sub =>
       sub
-        .setName("revision")
+        .setName("update_satus")
         .setDescription("Update revision status")
         .addStringOption(option =>
           option
@@ -80,9 +80,8 @@ const trixieCommand: SlashCommand = {
             .addChoices(
               { name: "Not started", value: "Not started" },
               { name: "In progress", value: "In progress" },
-              { name: "render queue", value: "render queue" },
-              { name: "Compositing", value: "Compositing" },
               { name: "In Review", value: "In Review" },
+              { name: "revision", value: "revision" },
               { name: "Done", value: "Done" }
             )
         )
