@@ -59,6 +59,19 @@ const trixieCommand: SlashCommand = {
         .setDescription("Update revision status")
         .addStringOption(option =>
           option
+            .setName("status")
+            .setDescription("Select revision status")
+            .setRequired(true)
+            .addChoices(
+              { name: "Not started", value: "Not started" },
+              { name: "In progress", value: "In progress" },
+              { name: "In Review", value: "In Review" },
+              { name: "revision", value: "revision" },
+              { name: "Done", value: "Done" }
+            )
+        )
+        .addStringOption(option =>
+          option
             .setName("stage")
             .setDescription("Select production stage")
             .setRequired(true)
@@ -70,19 +83,6 @@ const trixieCommand: SlashCommand = {
               { name: "Layout", value: "Layout" },
               { name: "Lighting", value: "Lighting" },
               { name: "Compositing", value: "Compositing" }
-            )
-        )
-        .addStringOption(option =>
-          option
-            .setName("status")
-            .setDescription("Select revision status")
-            .setRequired(true)
-            .addChoices(
-              { name: "Not started", value: "Not started" },
-              { name: "In progress", value: "In progress" },
-              { name: "In Review", value: "In Review" },
-              { name: "revision", value: "revision" },
-              { name: "Done", value: "Done" }
             )
         )
         .addStringOption(option =>
