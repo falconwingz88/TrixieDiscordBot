@@ -263,9 +263,9 @@ const trixieCommand: SlashCommand = {
       return;
     }
     /* =======================
-        /trixie revision
+        /trixie update_status
     ======================= */
-    if (sub === "revision") {
+    if (sub === "update_status") {
       await interaction.deferReply({ ephemeral: false });
 
       const selected_stage = interaction.options.getString("stage", true);
