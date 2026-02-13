@@ -9,8 +9,8 @@ const REVISION_STATUS_UPDATE_URL =
 
 const updateProjectStatusCommand: SlashCommand = {
   command: new SlashCommandBuilder()
-    .setName("update_project_status")
-    .setDescription("Update Project Production Stage to In Progress")
+    .setName("update_status")
+    .setDescription("Update Project Status to In Progress")
     .addStringOption(option =>
       option
         .setName("stage")
