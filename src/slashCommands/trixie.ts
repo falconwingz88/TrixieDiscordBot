@@ -55,7 +55,7 @@ const trixieCommand: SlashCommand = {
     )
     .addSubcommand(sub =>
       sub
-        .setName("update_satus")
+        .setName("update_status")
         .setDescription("Update revision status")
         .addStringOption(option =>
           option
