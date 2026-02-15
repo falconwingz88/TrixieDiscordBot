@@ -223,7 +223,8 @@ const trixieCommand: SlashCommand = {
         await interaction.editReply(reply);
       } catch (err) {
         console.error(err);
-        await interaction.editReply("❌ Failed to contact workflow service.");
+        await interaction.editReply(`❌ <@&1321122630744412241> Failed to contact workflow service.`);
+
       }
     }
     /* =======================
@@ -329,7 +330,7 @@ const trixieCommand: SlashCommand = {
         await interaction.editReply(reply);
       } catch (err) {
         console.error(err);
-        await interaction.editReply("❌ Failed to update revision status.");
+        await interaction.editReply(`❌ <@&1321122630744412241> Failed to update revision status.`)
       }
 
       return;
