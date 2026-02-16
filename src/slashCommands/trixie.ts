@@ -55,7 +55,7 @@ const trixieCommand: SlashCommand = {
     )
     .addSubcommand(sub =>
       sub
-        .setName("inprogress")
+        .setName("update_status")
         .setDescription("Update revision status")
         .addStringOption(option =>
           option
@@ -264,9 +264,9 @@ const trixieCommand: SlashCommand = {
       return;
     }
     /* =======================
-        /trixie inprogress
+        /trixie update_status
     ======================= */
-    if (sub === "inprogress") {
+    if (sub === "update_status") {
       await interaction.deferReply({ ephemeral: false });
 
       const selected_stage = interaction.options.getString("stage", true);
