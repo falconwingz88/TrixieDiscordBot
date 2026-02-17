@@ -353,7 +353,7 @@ const trixieCommand: SlashCommand = {
     if (sub === "rename_page") {
       await interaction.deferReply({ ephemeral: false });
 
-      const name = interaction.options.getString("page_name", true);
+      const new_page_name = interaction.options.getString("page_name", true);
 
       const channel = interaction.channel;
       const isThread = channel?.isThread() ?? false;
@@ -402,7 +402,7 @@ const trixieCommand: SlashCommand = {
               parentChannelId: isThread ? channel!.parentId : null,
             },
             category,
-            name, // 👈 instead of caption
+            new_page_name, // 👈 instead of caption
             timestamp: new Date().toISOString(),
             source: "rename",
           }),
