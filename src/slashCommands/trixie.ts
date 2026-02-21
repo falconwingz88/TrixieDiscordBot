@@ -25,6 +25,20 @@ const REVISION_STATUS_UPDATE_URL =
 const RENAME_WEBHOOK_URL =
   "https://primary-production-cc89.up.railway.app/webhook/neotrix-rename-discord-notion-page-title"; // <-- rename webhook url
 
+const WEBHOOK_TIMEOUT_MS = 180_000; // 3 minutes
+
+/* =======================
+   HELPER
+======================= */
+function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  return fetch(url, { ...options, signal: controller.signal }).finally(() =>
+    clearTimeout(timer)
+  );
+}
+
 /* =======================
    COMMAND
 ======================= */
@@ -199,46 +213,55 @@ const trixieCommand: SlashCommand = {
         : [];
 
       try {
-        const response = await fetch(WEBHOOK_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user: {
-              id: interaction.user.id,
-              username: interaction.user.username,
-              tag: interaction.user.tag,
-            },
-            roles,
-            guild: interaction.guild
-              ? { id: interaction.guild.id, name: interaction.guild.name }
-              : null,
-            channel: {
-              id: interaction.channelId,
-              name: channel?.name ?? null,
-              isThread,
-              threadId: isThread ? channel!.id : null,
-              parentChannelId: isThread ? channel!.parentId : null,
-            },
-            category,
-            caption, // 👈 NEW FIELD
-            timestamp: new Date().toISOString(),
-            source: "send_updates",
-          }),
-        });
+        const response = await fetchWithTimeout(
+          WEBHOOK_URL,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              user: {
+                id: interaction.user.id,
+                username: interaction.user.username,
+                tag: interaction.user.tag,
+              },
+              roles,
+              guild: interaction.guild
+                ? { id: interaction.guild.id, name: interaction.guild.name }
+                : null,
+              channel: {
+                id: interaction.channelId,
+                name: channel?.name ?? null,
+                isThread,
+                threadId: isThread ? channel!.id : null,
+                parentChannelId: isThread ? channel!.parentId : null,
+              },
+              category,
+              caption,
+              timestamp: new Date().toISOString(),
+              source: "send_updates",
+            }),
+          },
+          WEBHOOK_TIMEOUT_MS
+        );
 
-        let reply = "⏳ Processing…";
-        try {
-          const data = await response.json();
-          if (typeof data?.message === "string") reply = data.message;
-        } catch {}
+        const data = await response.json();
+        if (typeof data?.message !== "string") throw new Error("No message returned");
 
-        await interaction.editReply(reply);
-      } catch (err) {
+        await interaction.editReply(data.message);
+      } catch (err: any) {
         console.error(err);
-        await interaction.editReply(`❌ <@&1321122630744412241> Failed to contact workflow service.`);
-
+        if (err.name === "AbortError") {
+          await interaction.editReply(
+            `⏱️ <@&1321122630744412241> Webhook timed out after ${WEBHOOK_TIMEOUT_MS / 1000}s — no response from workflow service.`
+          );
+        } else {
+          await interaction.editReply(
+            `❌ <@&1321122630744412241> Failed to contact workflow service.`
+          );
+        }
       }
     }
+
     /* =======================
       /trixie extract_slides
     ======================= */
@@ -275,6 +298,7 @@ const trixieCommand: SlashCommand = {
       });
       return;
     }
+
     /* =======================
         /trixie update_status
     ======================= */
@@ -303,50 +327,60 @@ const trixieCommand: SlashCommand = {
           }
         }
       }
-      
+
       try {
-        const response = await fetch(REVISION_STATUS_UPDATE_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user: {
-              id: interaction.user.id,
-              username: interaction.user.username,
-              tag: interaction.user.tag,
-            },
-            guild: interaction.guild
-              ? { id: interaction.guild.id, name: interaction.guild.name }
-              : null,
-            channel: {
-              id: interaction.channelId,
-              name: interaction.channel?.name ?? null,
-              isThread,
-              threadId: isThread ? channel!.id : null,
-              parentChannelId: isThread ? channel!.parentId : null,
-            },
-            category,
-            selected_stage,
-            status,
-            revision_note: revisionNote,
-            timestamp: new Date().toISOString(),
-            source: "revision_status_update",
-          }),
-        });
+        const response = await fetchWithTimeout(
+          REVISION_STATUS_UPDATE_URL,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              user: {
+                id: interaction.user.id,
+                username: interaction.user.username,
+                tag: interaction.user.tag,
+              },
+              guild: interaction.guild
+                ? { id: interaction.guild.id, name: interaction.guild.name }
+                : null,
+              channel: {
+                id: interaction.channelId,
+                name: interaction.channel?.name ?? null,
+                isThread,
+                threadId: isThread ? channel!.id : null,
+                parentChannelId: isThread ? channel!.parentId : null,
+              },
+              category,
+              selected_stage,
+              status,
+              revision_note: revisionNote,
+              timestamp: new Date().toISOString(),
+              source: "revision_status_update",
+            }),
+          },
+          WEBHOOK_TIMEOUT_MS
+        );
 
-        let reply = "⏳ Updating revision status...";
-        try {
-          const data = await response.json();
-          if (typeof data?.message === "string") reply = data.message;
-        } catch {}
+        const data = await response.json();
+        if (typeof data?.message !== "string") throw new Error("No message returned");
 
-        await interaction.editReply(reply);
-      } catch (err) {
+        await interaction.editReply(data.message);
+      } catch (err: any) {
         console.error(err);
-        await interaction.editReply(`❌ <@&1321122630744412241> Failed to update revision status.`)
+        if (err.name === "AbortError") {
+          await interaction.editReply(
+            `⏱️ <@&1321122630744412241> Webhook timed out after ${WEBHOOK_TIMEOUT_MS / 1000}s — no response from workflow service.`
+          );
+        } else {
+          await interaction.editReply(
+            `❌ <@&1321122630744412241> Failed to update revision status.`
+          );
+        }
       }
 
       return;
     }
+
     /* =======================
       /trixie rename_page
     ======================= */
@@ -381,50 +415,56 @@ const trixieCommand: SlashCommand = {
         : [];
 
       try {
-        const response = await fetch(RENAME_WEBHOOK_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user: {
-              id: interaction.user.id,
-              username: interaction.user.username,
-              tag: interaction.user.tag,
-            },
-            roles,
-            guild: interaction.guild
-              ? { id: interaction.guild.id, name: interaction.guild.name }
-              : null,
-            channel: {
-              id: interaction.channelId,
-              name: channel?.name ?? null,
-              isThread,
-              threadId: isThread ? channel!.id : null,
-              parentChannelId: isThread ? channel!.parentId : null,
-            },
-            category,
-            new_page_name, // 👈 instead of caption
-            timestamp: new Date().toISOString(),
-            source: "rename",
-          }),
-        });
-
-        let reply = "⏳ Renaming...";
-        try {
-          const data = await response.json();
-          if (typeof data?.message === "string") reply = data.message;
-        } catch {}
-
-        await interaction.editReply(reply);
-      } catch (err) {
-        console.error(err);
-        await interaction.editReply(
-          `❌ <@&1321122630744412241> Failed to rename.`
+        const response = await fetchWithTimeout(
+          RENAME_WEBHOOK_URL,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              user: {
+                id: interaction.user.id,
+                username: interaction.user.username,
+                tag: interaction.user.tag,
+              },
+              roles,
+              guild: interaction.guild
+                ? { id: interaction.guild.id, name: interaction.guild.name }
+                : null,
+              channel: {
+                id: interaction.channelId,
+                name: channel?.name ?? null,
+                isThread,
+                threadId: isThread ? channel!.id : null,
+                parentChannelId: isThread ? channel!.parentId : null,
+              },
+              category,
+              new_page_name,
+              timestamp: new Date().toISOString(),
+              source: "rename",
+            }),
+          },
+          WEBHOOK_TIMEOUT_MS
         );
+
+        const data = await response.json();
+        if (typeof data?.message !== "string") throw new Error("No message returned");
+
+        await interaction.editReply(data.message);
+      } catch (err: any) {
+        console.error(err);
+        if (err.name === "AbortError") {
+          await interaction.editReply(
+            `⏱️ <@&1321122630744412241> Webhook timed out after ${WEBHOOK_TIMEOUT_MS / 1000}s — no response from workflow service.`
+          );
+        } else {
+          await interaction.editReply(
+            `❌ <@&1321122630744412241> Failed to rename.`
+          );
+        }
       }
 
       return;
     }
-
   },
 };
 
