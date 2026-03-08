@@ -64,8 +64,8 @@ const trixieCommand: SlashCommand = {
         .addStringOption(option =>
           option
             .setName("stage")
-            .setDescription("Select production stage")
-            .setRequired(true)
+            .setDescription("change production stage to in review")
+            .setRequired(false)
             .addChoices(
               { name: "3D", value: "3D" },
               { name: "Rendering", value: "Rendering" },
