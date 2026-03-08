@@ -63,6 +63,21 @@ const trixieCommand: SlashCommand = {
         .setDescription("Send a Discord context preview to the backend")
         .addStringOption(option =>
           option
+            .setName("stage")
+            .setDescription("Select production stage")
+            .setRequired(true)
+            .addChoices(
+              { name: "3D", value: "3D" },
+              { name: "Rendering", value: "Rendering" },
+              { name: "Animation", value: "Animation" },
+              { name: "Modelling", value: "Modelling" },
+              { name: "Layout", value: "Layout" },
+              { name: "Lighting", value: "Lighting" },
+              { name: "Compositing", value: "Compositing" }
+            )
+        )
+        .addStringOption(option =>
+          option
             .setName("caption")
             .setDescription("Caption for this update")
             .setRequired(false)
@@ -185,6 +200,7 @@ const trixieCommand: SlashCommand = {
     if (sub === "send_updates") {
       await interaction.deferReply({ ephemeral: false });
 
+      const stage = interaction.options.getString("stage", true);
       const caption = interaction.options.getString("caption") || "";
 
       const channel = interaction.channel;
@@ -236,6 +252,7 @@ const trixieCommand: SlashCommand = {
                 parentChannelId: isThread ? channel!.parentId : null,
               },
               category,
+              stage, // <-- Stage ditambahkan di sini
               caption,
               timestamp: new Date().toISOString(),
               source: "send_updates",
