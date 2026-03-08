@@ -200,7 +200,7 @@ const trixieCommand: SlashCommand = {
     if (sub === "send_updates") {
       await interaction.deferReply({ ephemeral: false });
 
-      const stage = interaction.options.getString("stage", true) || "";
+      const stage = interaction.options.getString("stage") || "";
       const caption = interaction.options.getString("caption") || "";
 
       const channel = interaction.channel;
