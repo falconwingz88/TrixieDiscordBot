@@ -38,7 +38,7 @@ const slashCommandsArr: SlashCommandBuilder[] = [];
 
 const commandsPath = join(__dirname, "slashCommands");
 const commandFiles = readdirSync(commandsPath).filter(file =>
-  file.endsWith(".ts")
+  file.endsWith(process.env.NODE_ENV === "development" ? ".ts" : ".js")
 );
 
 for (const file of commandFiles) {
