@@ -14,16 +14,19 @@ import { PERMISSIONS } from "../config";
    CONFIG
 ======================= */
 const FORM_URL =
-  "https://primary-production-cc89.up.railway.app/form/b97a75c0-6184-46f8-b5d3-f9b3ed0ae8b1"; //project creation url
-
+  //"https://primary-production-cc89.up.railway.app/form/b97a75c0-6184-46f8-b5d3-f9b3ed0ae8b1"; //project creation url
+  "https://n8n-neotrix-production.tailfd96cd.ts.net/form/d0fc9056-ca45-41f3-9266-d1465e64e482";
 const WEBHOOK_URL =
-  "https://primary-production-cc89.up.railway.app/webhook/neotrix-sendupdates-to-notion";//send updates webhook url
+  //"https://primary-production-cc89.up.railway.app/webhook/neotrix-sendupdates-to-notion";//send updates webhook url
+  "https://n8n-neotrix-production.tailfd96cd.ts.net/webhook/neotrix-sendupdates-to-notion";
 const EXTRACT_SLIDES_GUIDE_URL =
   "https://www.notion.so/neotrix/Selection-Distribution-Automation-2f1032d70c33807b8b35e20c4a496fbe";
 const REVISION_STATUS_UPDATE_URL = 
-  "https://primary-production-cc89.up.railway.app/webhook/neotrix-update-production-status-stage"; // revision webhook url
+  //"https://primary-production-cc89.up.railway.app/webhook/neotrix-update-production-status-stage"; // revision webhook url
+  "https://n8n-neotrix-production.tailfd96cd.ts.net/webhook/neotrix-update-production-status-stage";
 const RENAME_WEBHOOK_URL =
-  "https://primary-production-cc89.up.railway.app/webhook/neotrix-rename-discord-notion-page-title"; // <-- rename webhook url
+ //"https://primary-production-cc89.up.railway.app/webhook/neotrix-rename-discord-notion-page-title"; // <-- rename webhook url
+  "https://n8n-neotrix-production.tailfd96cd.ts.net/webhook/neotrix-rename-discord-notion-page-title";
 
 const WEBHOOK_TIMEOUT_MS = 180_000; // 3 minutes
 
