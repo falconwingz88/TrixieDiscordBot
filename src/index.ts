@@ -18,6 +18,7 @@ dotenv.config();
 const token = process.env.DISCORD_TOKEN; // Token from Railway Env Variable.
 const client_id = process.env.CLIENT_ID;
 
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -37,8 +38,10 @@ const slashCommands = new Collection<string, SlashCommand>();
 const slashCommandsArr: SlashCommandBuilder[] = [];
 
 const commandsPath = join(__dirname, "slashCommands");
+const isTs = __filename.endsWith(".ts");
+
 const commandFiles = readdirSync(commandsPath).filter(file =>
-  file.endsWith(process.env.NODE_ENV === "development" ? ".ts" : ".js")
+  file.endsWith(isTs ? ".ts" : ".js")
 );
 
 for (const file of commandFiles) {

@@ -4,7 +4,7 @@ import { SlashCommand } from "../types";
 const testCommand: SlashCommand = {
     command: new SlashCommandBuilder()
         .setName("test")
-        .setDescription("Test webhook and tag if failed"),
+        .setDescription("Test webhook n8n"),
 
     execute: async (interaction) => {
 
@@ -20,7 +20,7 @@ const testCommand: SlashCommand = {
         try {
             const res = await fetch(
                 //"https://primary-production-cc89.up.railway.app/webhook/b4d32f34-2646-4510-aa59-16ee84367943",
-                "https://n8n-neotrix-production.tailfd96cd.ts.net/form-test/2ffed012-e80f-4100-8045-738a2e17482a",
+                "https://n8n-neotrix-production.tailfd96cd.ts.net/webhook/test-workflow",
                 {
                     method: "POST",
                     headers: {
