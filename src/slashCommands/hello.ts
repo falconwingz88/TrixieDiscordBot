@@ -4,7 +4,7 @@ import { SlashCommand } from "../types";
 const helloCommand: SlashCommand = {
     command: new SlashCommandBuilder()
         .setName("hello")
-        .setDescription("Hello from trixie")
+        .setDescription("Hello from trixie :)")
         .addStringOption(option => {
             return option
                 .setName("content")
