@@ -3,7 +3,7 @@ import { SlashCommand } from "../types";
 
 const helloCommand: SlashCommand = {
     command: new SlashCommandBuilder()
-        .setName("hello")
+        .setName("hello from trixie")
         .setDescription("Test command")
         .addStringOption(option => {
             return option
