@@ -29,6 +29,8 @@ const RENAME_WEBHOOK_URL =
   "https://n8n-neotrix-production.tailfd96cd.ts.net/webhook/neotrix-rename-discord-notion-page-title";
 const GET_CREATED_WEBHOOK_URL =
   "https://n8n-neotrix-production.tailfd96cd.ts.net/webhook/get-created";
+const DELETE_PROJECT_WEBHOOK_URL =
+  "https://n8n-neotrix-production.tailfd96cd.ts.net/webhook/delete-project";
 
 const WEBHOOK_TIMEOUT_MS = 180_000; // 3 minutes
 
@@ -143,6 +145,17 @@ const trixieCommand: SlashCommand = {
       sub
         .setName("get_project")
         .setDescription("Get a list of created projects and their category IDs")
+    )
+    .addSubcommand(sub =>
+      sub
+        .setName("delete_project")
+        .setDescription(" HATI-HATI! Delete a project using its Discord Category ID")
+        .addStringOption(option =>
+          option
+            .setName("category_id")
+            .setDescription("Input Discord Category ID dari project yang ingin dihapus")
+            .setRequired(true)
+        )
     ),
 
   async execute(interaction: ChatInputCommandInteraction) {
@@ -550,6 +563,59 @@ const trixieCommand: SlashCommand = {
         } else {
           await interaction.editReply(
             `❌ <@&1468897007530672202> Failed to fetch project list dari webhook.`
+          );
+        }
+      }
+      return;
+    }
+    /* =======================
+       /trixie delete_project
+    ======================= */
+    if (sub === "delete_project") {
+      await interaction.deferReply({ ephemeral: false });
+
+      const categoryId = interaction.options.getString("category_id", true);
+
+      try {
+        const response = await fetchWithTimeout(
+          DELETE_PROJECT_WEBHOOK_URL,
+          {
+            method: "POST", // Menggunakan POST untuk mengirim payload ke n8n
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              discord_category_id: categoryId,
+              // Anda bisa mengirim info user juga jika dibutuhkan n8n untuk log
+              user_id: interaction.user.id, 
+              username: interaction.user.username 
+            }),
+          },
+          WEBHOOK_TIMEOUT_MS
+        );
+
+        const data = await response.json();
+        
+        // Asumsi balasan dari n8n memiliki format {"status": "success"} atau text langsung
+        // Kita ubah ke string lowercase untuk mempermudah pengecekan kondisi
+        const responseStatus = (data.status || data.message || String(data)).toLowerCase();
+
+        if (responseStatus.includes("success")) {
+          await interaction.editReply(`✅ **Sukses**: Project dengan Category ID \`${categoryId}\` berhasil dihapus.`);
+        } else if (responseStatus.includes("not found")) {
+          await interaction.editReply(`⚠️ **Not Found**: Project ini belum bisa dihapus menggunakan command ini.`);
+        } else {
+          // Jatuh ke kondisi 'failed' atau error lainnya
+          await interaction.editReply(`❌ **Failed**: Gagal menghapus project dengan Category ID \`${categoryId}\`.`);
+        }
+
+      } catch (err: any) {
+        console.error(err);
+        if (err.name === "AbortError") {
+          await interaction.editReply(
+            `⏱️ <@&1468897007530672202> Webhook timed out after ${WEBHOOK_TIMEOUT_MS / 1000}s — tidak ada respons dari workflow n8n.`
+          );
+        } else {
+          await interaction.editReply(
+            `❌ <@&1468897007530672202> Gagal menghubungi webhook delete-project.`
           );
         }
       }
