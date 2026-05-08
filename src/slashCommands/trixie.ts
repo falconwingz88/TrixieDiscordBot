@@ -572,6 +572,19 @@ const trixieCommand: SlashCommand = {
        /trixie delete_project
     ======================= */
     if (sub === "delete_project") {
+      // 1. Daftar ID User yang diizinkan
+      const ALLOWED_DELETE_USERS = ["148069941097136128", "263676243734429697"];
+
+      // 2. Cek apakah user yang memanggil command ada di dalam daftar
+      if (!ALLOWED_DELETE_USERS.includes(interaction.user.id)) {
+        await interaction.reply({
+          content: "❌ Maaf, Anda tidak memiliki izin untuk menggunakan command penghapusan project ini.",
+          ephemeral: true, // Pesan ini hanya bisa dilihat oleh user yang mencoba
+        });
+        return;
+      }
+
+      // 3. Jika lolos pengecekan, lanjutkan seperti biasa
       await interaction.deferReply({ ephemeral: false });
 
       const categoryId = interaction.options.getString("category_id", true);
@@ -580,11 +593,10 @@ const trixieCommand: SlashCommand = {
         const response = await fetchWithTimeout(
           DELETE_PROJECT_WEBHOOK_URL,
           {
-            method: "POST", // Menggunakan POST untuk mengirim payload ke n8n
+            method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               discord_category_id: categoryId,
-              // Anda bisa mengirim info user juga jika dibutuhkan n8n untuk log
               user_id: interaction.user.id, 
               username: interaction.user.username 
             }),
@@ -594,8 +606,6 @@ const trixieCommand: SlashCommand = {
 
         const data = await response.json();
         
-        // Asumsi balasan dari n8n memiliki format {"status": "success"} atau text langsung
-        // Kita ubah ke string lowercase untuk mempermudah pengecekan kondisi
         const responseStatus = (data.status || data.message || String(data)).toLowerCase();
 
         if (responseStatus.includes("success")) {
@@ -603,7 +613,6 @@ const trixieCommand: SlashCommand = {
         } else if (responseStatus.includes("not found")) {
           await interaction.editReply(`⚠️ **Not Found**: Project ini belum bisa dihapus menggunakan command ini.`);
         } else {
-          // Jatuh ke kondisi 'failed' atau error lainnya
           await interaction.editReply(`❌ **Failed**: Gagal menghapus project dengan Category ID \`${categoryId}\`.`);
         }
 
