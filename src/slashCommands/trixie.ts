@@ -492,7 +492,7 @@ const trixieCommand: SlashCommand = {
 
       return;
     }
-    
+
     /* =======================
        /trixie get_project
     ======================= */
@@ -516,37 +516,40 @@ const trixieCommand: SlashCommand = {
 
         const data = await response.json();
 
-        // Validasi jika data kosong atau bukan array
-        if (!Array.isArray(data) || data.length === 0) {
-          await interaction.editReply("📭 Tidak ada project yang ditemukan (Data kosong).");
+        // 1. Ubah jadi array otomatis kalau n8n cuma kirim 1 objek
+        const projectArray = Array.isArray(data) ? data : [data];
+
+        // 2. Validasi jika data kosong atau tidak punya 'project_ids'
+        if (projectArray.length === 0 || !projectArray[0]?.project_ids) {
+          await interaction.editReply("📭 Tidak ada project yang ditemukan atau format data tidak sesuai.");
           return;
         }
 
-        // Mapping data untuk mengambil nama project dan category ID
-        const projectList = data.map((item, index) => {
+        // 3. Mapping data untuk mengambil nama project dan category ID
+        const projectList = projectArray.map((item, index) => {
           const projectName = item.project_ids?.project_name || "Unknown Project";
           const categoryId = item.project_ids?.discord_category_id || "Unknown ID";
           
           return `**${index + 1}. ${projectName}**\n↳ Category ID: \`${categoryId}\``;
         }).join("\n\n");
 
-        // Membungkus list ke dalam Embed
+        // 4. Membungkus list ke dalam Embed
         const embed = new EmbedBuilder()
           .setTitle("📁 List of Created Projects")
           .setDescription(projectList)
           .setColor(0x5865f2)
-          .setFooter({ text: `Total Projects: ${data.length}` });
+          .setFooter({ text: `Total Projects: ${projectArray.length}` });
 
         await interaction.editReply({ embeds: [embed] });
       } catch (err: any) {
         console.error(err);
         if (err.name === "AbortError") {
           await interaction.editReply(
-            `⏱️ <@&1321122630744412241> Webhook timed out after ${WEBHOOK_TIMEOUT_MS / 1000}s — no response from workflow service.`
+            `⏱️ <@&1468897007530672202> Webhook timed out after ${WEBHOOK_TIMEOUT_MS / 1000}s — no response from workflow service.`
           );
         } else {
           await interaction.editReply(
-            `❌ <@&1321122630744412241> Failed to fetch project list dari webhook.`
+            `❌ <@&1468897007530672202> Failed to fetch project list dari webhook.`
           );
         }
       }
