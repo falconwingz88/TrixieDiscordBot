@@ -27,6 +27,8 @@ const REVISION_STATUS_UPDATE_URL =
 const RENAME_WEBHOOK_URL =
  //"https://primary-production-cc89.up.railway.app/webhook/neotrix-rename-discord-notion-page-title"; // <-- rename webhook url
   "https://n8n-neotrix-production.tailfd96cd.ts.net/webhook/neotrix-rename-discord-notion-page-title";
+const GET_CREATED_WEBHOOK_URL =
+  "https://n8n-neotrix-production.tailfd96cd.ts.net/webhook/get-created";
 
 const WEBHOOK_TIMEOUT_MS = 180_000; // 3 minutes
 
@@ -136,11 +138,16 @@ const trixieCommand: SlashCommand = {
             .setDescription("New page title")
             .setRequired(true)
         )
+    )
+    .addSubcommand(sub =>
+      sub
+        .setName("get_project")
+        .setDescription("Get a list of created projects and their category IDs")
     ),
 
   async execute(interaction: ChatInputCommandInteraction) {
     const sub = interaction.options.getSubcommand();
-
+    
     /* =======================
        ROLE GUARD (SHARED)
     ======================= */
@@ -483,6 +490,66 @@ const trixieCommand: SlashCommand = {
         }
       }
 
+      return;
+    }
+    
+    /* =======================
+       /trixie get_project
+    ======================= */
+    if (sub === "get_project") {
+      // Defer reply karena fetch ke N8N mungkin memakan waktu beberapa detik
+      await interaction.deferReply({ ephemeral: false });
+
+      try {
+        const response = await fetchWithTimeout(
+          GET_CREATED_WEBHOOK_URL,
+          {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+          },
+          WEBHOOK_TIMEOUT_MS
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Validasi jika data kosong atau bukan array
+        if (!Array.isArray(data) || data.length === 0) {
+          await interaction.editReply("📭 Tidak ada project yang ditemukan (Data kosong).");
+          return;
+        }
+
+        // Mapping data untuk mengambil nama project dan category ID
+        const projectList = data.map((item, index) => {
+          const projectName = item.project_ids?.project_name || "Unknown Project";
+          const categoryId = item.project_ids?.discord_category_id || "Unknown ID";
+          
+          return `**${index + 1}. ${projectName}**\n↳ Category ID: \`${categoryId}\``;
+        }).join("\n\n");
+
+        // Membungkus list ke dalam Embed
+        const embed = new EmbedBuilder()
+          .setTitle("📁 List of Created Projects")
+          .setDescription(projectList)
+          .setColor(0x5865f2)
+          .setFooter({ text: `Total Projects: ${data.length}` });
+
+        await interaction.editReply({ embeds: [embed] });
+      } catch (err: any) {
+        console.error(err);
+        if (err.name === "AbortError") {
+          await interaction.editReply(
+            `⏱️ <@&1321122630744412241> Webhook timed out after ${WEBHOOK_TIMEOUT_MS / 1000}s — no response from workflow service.`
+          );
+        } else {
+          await interaction.editReply(
+            `❌ <@&1321122630744412241> Failed to fetch project list dari webhook.`
+          );
+        }
+      }
       return;
     }
   },
