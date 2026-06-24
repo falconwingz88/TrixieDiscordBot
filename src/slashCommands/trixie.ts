@@ -573,7 +573,7 @@ const trixieCommand: SlashCommand = {
     ======================= */
     if (sub === "delete_project") {
       // 1. Daftar ID User yang diizinkan
-      const ALLOWED_DELETE_USERS = ["148069941097136128", "263676243734429697"];
+      const ALLOWED_DELETE_USERS = ["148069941097136128", "263676243734429697", "1451914903035318324", "313249035727405057"];
 
       // 2. Cek apakah user yang memanggil command ada di dalam daftar
       if (!ALLOWED_DELETE_USERS.includes(interaction.user.id)) {
