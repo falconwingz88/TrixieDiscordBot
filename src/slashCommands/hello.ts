@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChannelType, TextChannel, EmbedBuilder } from "discord.js"
+import { SlashCommandBuilder, EmbedBuilder } from "discord.js"
 import { SlashCommand } from "../types";
 
 const helloCommand: SlashCommand = {
@@ -12,13 +12,7 @@ const helloCommand: SlashCommand = {
                 .setRequired(false);
         }),
     execute: async (interaction) => {
-        const options: { [key: string]: string | number | boolean } = {};
-        for (let i = 0; i < interaction.options.data.length; i++) {
-            const element = interaction.options.data[i];
-            if (element.name && element.value) options[element.name] = element.value;
-        }
-
-        interaction.reply({
+        await interaction.reply({
             embeds: [
                 new EmbedBuilder()
                     .setAuthor({ name: "Response Title" })

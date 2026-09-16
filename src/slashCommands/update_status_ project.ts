@@ -3,10 +3,11 @@ import {
   ChatInputCommandInteraction,
 } from "discord.js";
 import { SlashCommand } from "../types";
+import { main_url } from "./trixie";
 
 const REVISION_STATUS_UPDATE_URL =
   //"https://primary-production-cc89.up.railway.app/webhook/neotrix-update-production-status-stage"; // same as revision
-  "https://n8n-neotrix-production.tailfd96cd.ts.net/webhook/neotrix-update-production-status-stage";
+  main_url + "/webhook/neotrix-update-production-status-stage";
 
 const updateProjectStatusCommand: SlashCommand = {
   command: new SlashCommandBuilder()
